@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections;
 using Microsoft.Xna.Framework;
+using Archipelago.MultiClient.Net;
+using Monocle;
+using Celeste.Mod.CelesteArchipelago.PatchedObjects;
+using MonoMod.RuntimeDetour;
 
 namespace Celeste.Mod.CelesteArchipelago {
     public class CelesteArchipelagoModule : EverestModule {
@@ -29,18 +33,37 @@ namespace Celeste.Mod.CelesteArchipelago {
 
         public override void Load() {
             // TODO: apply any hooks that should always be active
-            On.Celeste.Strawberry.OnCollect += PatchedStrawberry.OnCollect;
-            On.Celeste.Strawberry.CollectRoutine += PatchedStrawberry.CollectRoutine;
-            On.Celeste.SaveData.CheckStrawberry_AreaKey_EntityID += PatchedSaveData.CheckStrawberry_AreaKey_EntityID;
-            On.Celeste.SaveData.CheckStrawberry_EntityID += PatchedSaveData.CheckStrawberry_EntityID;
+            PatchedCassette.Load();
+            PatchedHeartGem.Load();
+            PatchedLevelSetStats.Load();
+            PatchedOuiChapterPanel.Load();
+            PatchedOuiChapterSelect.Load();
+            PatchedOuiJournal.Load();
+            PatchedSaveData.Load();
+            PatchedStrawberry.Load();
+
+            Everest.Events.MainMenu.OnCreateButtons += ArchipelagoUI.ReplaceClimbButton;
+        }
+
+        public override void Initialize()
+        {
+            
+            // Logger.Log("CelesteArchipelago", AreaData.Areas.ToString());
         }
 
         public override void Unload() {
             // TODO: unapply any hooks applied in Load()
-            On.Celeste.Strawberry.OnCollect -= PatchedStrawberry.OnCollect;
-            On.Celeste.Strawberry.CollectRoutine -= PatchedStrawberry.CollectRoutine;
-            On.Celeste.SaveData.CheckStrawberry_AreaKey_EntityID -= PatchedSaveData.CheckStrawberry_AreaKey_EntityID;
-            On.Celeste.SaveData.CheckStrawberry_EntityID -= PatchedSaveData.CheckStrawberry_EntityID;
+            PatchedCassette.Unload();
+            PatchedHeartGem.Unload();
+            PatchedLevelSetStats.Unload();
+            PatchedOuiChapterPanel.Unload();
+            PatchedOuiChapterSelect.Unload();
+            PatchedOuiJournal.Unload();
+            PatchedSaveData.Unload();
+            PatchedStrawberry.Unload();
+
+            Everest.Events.MainMenu.OnCreateButtons -= ArchipelagoUI.ReplaceClimbButton;
         }
+
     }
 }

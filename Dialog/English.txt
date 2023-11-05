@@ -1,0 +1,14 @@
+archipelago_menu_begin=
+	ARCHIPELAGO
+
+archipelago_menu_label_usespassword=
+	Uses Password
+
+archipelago_menu_regenuuid_really=
+	Are you sure? (this will prevent accessing ongoing games)
+
+archipelago_menu_regenuuid_yes=
+	Overwrite UUID
+
+archipelago_menu_regenuuid_no=
+	Cancel
