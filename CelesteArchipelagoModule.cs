@@ -20,6 +20,8 @@ namespace Celeste.Mod.CelesteArchipelago {
         public override Type SessionType => typeof(CelesteArchipelagoModuleSession);
         public static CelesteArchipelagoModuleSession Session => (CelesteArchipelagoModuleSession) Instance._Session;
 
+        public ChatHandler chatHandler;
+
         public CelesteArchipelagoModule() {
             Instance = this;
 #if DEBUG

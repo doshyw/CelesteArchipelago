@@ -36,6 +36,7 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             On.Celeste.Strawberry.CollectRoutine -= CollectRoutine;
             hook_Strawberry_orig_OnCollect.Dispose();
+            On.Celeste.Strawberry.ctor -= ctor;
         }
 
         public static IEnumerator CollectRoutine(On.Celeste.Strawberry.orig_CollectRoutine orig, Strawberry self, int collectIndex)

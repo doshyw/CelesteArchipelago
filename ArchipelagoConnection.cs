@@ -1,5 +1,7 @@
 ﻿using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
+using Archipelago.MultiClient.Net.Helpers;
+using Archipelago.MultiClient.Net.MessageLog.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +22,14 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             Instance = this;
             session = ArchipelagoSessionFactory.CreateSession($"{CelesteArchipelagoModule.Settings.Server}:{CelesteArchipelagoModule.Settings.Port}");
+            session.MessageLog.OnMessageReceived += OnMessageReceived;
             login = Connect();
             if(login == null )
             {
                 return;
             }
             slotData = new ArchipelagoSlotData(login.SlotData);
+            AddItemCallbackHandler();
         }
 
         private LoginSuccessful Connect()
@@ -59,7 +63,7 @@ namespace Celeste.Mod.CelesteArchipelago
             if (!result.Successful)
             {
                 LoginFailure failure = (LoginFailure)result;
-                Logger.Log("CelesteArchipelago", $"Failed to Connect to {session.Socket.Uri} as {CelesteArchipelagoModule.Settings.Name}:");
+                Logger.Log("CelesteArchipelago", $"Failed to Connect to {session.Socket.Uri} as {CelesteArchipelagoModule.Settings.Name}");
                 foreach (string error in failure.Errors)
                 {
                     Logger.Log("CelesteArchipelago", $"    {error}");
@@ -79,12 +83,41 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             session.Items.ItemReceived += (receivedItemsHelper) =>
             {
-                var itemReceivedName = receivedItemsHelper.PeekItemName() ?? $"Item: {receivedItemsHelper.Index}";
+                Logger.Log("CelesteArchipelago", $"Received item {receivedItemsHelper.PeekItemName()}");
 
-                // Implement handler code here
+                var itemID = receivedItemsHelper.PeekItem().Item;
+                ArchipelagoNetworkItem item = new ArchipelagoNetworkItem(itemID);
+
+                switch(item.type)
+                {
+                    case ItemType.CASSETTE:
+                        CelesteArchipelagoSaveData.SetCassetteInGame(item.area);
+                        break;
+                    case ItemType.COMPLETION:
+                        CelesteArchipelagoSaveData.SetCompletionInGame(item.area, item.mode);
+                        break;
+                    case ItemType.GEMHEART:
+                        CelesteArchipelagoSaveData.SetHeartGemInGame(item.area, item.mode);
+                        break;
+                    case ItemType.STRAWBERRY:
+                        CelesteArchipelagoSaveData.SetStrawberryInGame(item.area, item.strawberry.Value);
+                        break;
+                    default: break;
+                }
 
                 receivedItemsHelper.DequeueItem();
             };
+        }
+
+        public void CheckLocation(ArchipelagoNetworkItem location)
+        {
+            Logger.Log("CelesteArchipelago", $"Checking location {session.Locations.GetLocationNameFromId(location.ID) ?? location.ID.ToString()}");
+            session.Locations.CompleteLocationChecks(location.ID);
+        }
+
+        static void OnMessageReceived(LogMessage message)
+        {
+            CelesteArchipelagoModule.Instance.chatHandler.HandleMessage(message);
         }
 
     }

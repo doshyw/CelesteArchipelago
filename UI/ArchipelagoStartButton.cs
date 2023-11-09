@@ -27,7 +27,6 @@ namespace Celeste.Mod.CelesteArchipelago
 
         private void OnPress(Oui entryOui)
         {
-            Engine.Commands.Log("I am running a small test");
             Logger.Log("CelesteArchipelago", "Entered ArchipelagoStartButton.OnPress");
             SaveData saveData = null;
             if (UserIO.Open(UserIO.Mode.Read))
@@ -81,27 +80,11 @@ namespace Celeste.Mod.CelesteArchipelago
             PatchedOuiChapterSelect.HasChanges = true;
             SaveData.Instance.AssistModeChecks();
 
-            //foreach (AreaData area in AreaData.Areas)
-            //{
-            //    for (int i = 0; i < area.Mode.Length; i++)
-            //    {
-            //        ModeProperties modeProperties = area.Mode[i];
-            //        var maxJ = ((modeProperties.Checkpoints == null) ? 1 : (modeProperties.Checkpoints.Length + 1));
-            //        for(int j = 0; j < maxJ; j++)
-            //        {
-            //            var maxK = ((j == 0) ? modeProperties.StartStrawberries : modeProperties.Checkpoints[j - 1].Strawberries);
-            //            for (int k = 0; k < maxK; k++)
-            //            {
-            //                EntityData entityData = modeProperties.StrawberriesByCheckpoint[j, k];
-            //                if (entityData == null || entityData.Name != "strawberry")
-            //                {
-            //                    continue;
-            //                }
-            //                Logger.Log("CelesteArchipelago", $"areaID: {area.ID}, checkpoint: {j}, index: {k}, level: {entityData.Level.Name}, entityID: {entityData.ID}");
-            //            }
-            //        }
-            //    }
-            //}
+            CelesteArchipelagoModule.Instance.chatHandler = new ChatHandler(Celeste.Instance);
+            Celeste.Instance.Components.Add(CelesteArchipelagoModule.Instance.chatHandler);
+            CelesteArchipelagoModule.Instance.chatHandler.Init();
+
+            new ArchipelagoConnection();
 
             if (SaveData.Instance.CurrentSession_Safe != null && SaveData.Instance.CurrentSession_Safe.InArea)
             {

@@ -66,30 +66,15 @@ namespace Celeste.Mod.CelesteArchipelago
         }
 
         #region Cassettes
-        public static void SetCassetteInGame(int area, bool state = true)
+        public static void SetCassetteInGame(int area)
         {
-            var set = CelesteArchipelagoModule.SaveData.CassettesInside;
-            if (state)
-            {
-                set.Add(area);
-            }
-            else if (set.Contains(area))
-            {
-                set.Remove(area);
-            }
+            CelesteArchipelagoModule.SaveData.CassettesInside.Add(area);
         }
 
-        public static void SetCassetteOutGame(int area, bool state = true)
+        public static void SetCassetteOutGame(int area)
         {
-            var set = CelesteArchipelagoModule.SaveData.CassettesOutside;
-            if (state)
-            {
-                set.Add(area);
-            }
-            else if (set.Contains(area))
-            {
-                set.Remove(area);
-            }
+            CelesteArchipelagoModule.SaveData.CassettesOutside.Add(area);
+            ArchipelagoConnection.Instance.CheckLocation(new ArchipelagoNetworkItem(ItemType.CASSETTE, area, 0));
         }
 
         public static bool GetCassetteInGame(int area)
@@ -104,22 +89,15 @@ namespace Celeste.Mod.CelesteArchipelago
         #endregion
 
         #region Completions
-        public static void SetCompletionInGame(int mode, int area, bool state = true)
+        public static void SetCompletionInGame(int mode, int area)
         {
-            SaveData.Instance.Areas_Safe[area].Modes[mode].Completed = state;
+            SaveData.Instance.Areas_Safe[area].Modes[mode].Completed = true;
         }
 
-        public static void SetCompletionOutGame(int mode, int area, bool state = true)
+        public static void SetCompletionOutGame(int mode, int area)
         {
-            var set = CelesteArchipelagoModule.SaveData.Completions[mode];
-            if (state)
-            {
-                set.Add(area);
-            }
-            else if (set.Contains(area))
-            {
-                set.Remove(area);
-            }
+            CelesteArchipelagoModule.SaveData.Completions[mode].Add(area);
+            ArchipelagoConnection.Instance.CheckLocation(new ArchipelagoNetworkItem(ItemType.COMPLETION, area, mode));
         }
 
         public static bool GetCompletionInGame(int mode, int area)
@@ -127,29 +105,22 @@ namespace Celeste.Mod.CelesteArchipelago
             return SaveData.Instance.Areas_Safe[area].Modes[mode].Completed;
         }
 
-        public static bool GetCompletionOutGame(int mode,int area)
+        public static bool GetCompletionOutGame(int mode, int area)
         {
             return CelesteArchipelagoModule.SaveData.Completions[mode].Contains(area);
         }
         #endregion
 
         #region HeartGem
-        public static void SetHeartGemInGame(int mode, int area, bool state = true)
+        public static void SetHeartGemInGame(int mode, int area)
         {
-            SaveData.Instance.Areas_Safe[area].Modes[mode].HeartGem = state;
+            SaveData.Instance.Areas_Safe[area].Modes[mode].HeartGem = true;
         }
 
-        public static void SetHeartGemOutGame(int mode, int area, bool state = true)
+        public static void SetHeartGemOutGame(int mode, int area)
         {
-            var set = CelesteArchipelagoModule.SaveData.HeartGems[mode];
-            if (state)
-            {
-                set.Add(area);
-            }
-            else if (set.Contains(area))
-            {
-                set.Remove(area);
-            }
+            CelesteArchipelagoModule.SaveData.HeartGems[mode].Add(area);
+            ArchipelagoConnection.Instance.CheckLocation(new ArchipelagoNetworkItem(ItemType.GEMHEART, area, mode));
         }
 
         public static bool GetHeartGemInGame(int mode, int area)
@@ -166,33 +137,21 @@ namespace Celeste.Mod.CelesteArchipelago
         #region Strawberries
         public static void SetStrawberryInGame(int area, EntityID berry, bool state = true)
         {
-            if (state)
-            {
-                SaveData.Instance.AddStrawberry(new AreaKey(area), berry, false);
-            }
-            else
-            {
-                AreaModeStats areaModeStats = SaveData.Instance.Areas_Safe[area].Modes[0];
-                if (areaModeStats.Strawberries.Contains(berry))
-                {
-                    areaModeStats.Strawberries.Remove(berry);
-                    areaModeStats.TotalStrawberries--;
-                    SaveData.Instance.TotalStrawberries_Safe--;
-                }
-            }
+            SaveData.Instance.AddStrawberry(new AreaKey(area), berry, false);
+            //AreaModeStats areaModeStats = SaveData.Instance.Areas_Safe[area].Modes[0];
+            //if (areaModeStats.Strawberries.Contains(berry))
+            //{
+            //    areaModeStats.Strawberries.Remove(berry);
+            //    areaModeStats.TotalStrawberries--;
+            //    SaveData.Instance.TotalStrawberries_Safe--;
+            //}
         }
 
-        public static void SetStrawberryOutGame(int area, EntityID berry, bool state = true)
+        public static void SetStrawberryOutGame(int area, EntityID berry)
         {
-            var set = CelesteArchipelagoModule.SaveData.Strawberries[area];
-            if (state)
-            {
-                set.Add(berry);
-            }
-            else if (set.Contains(berry))
-            {
-                set.Remove(berry);
-            }
+            Logger.Log("CelesteArchipelago", "Setting Strawberry Outside Game");
+            CelesteArchipelagoModule.SaveData.Strawberries[area].Add(berry);
+            ArchipelagoConnection.Instance.CheckLocation(new ArchipelagoNetworkItem(ItemType.STRAWBERRY, area, 0, berry));
         }
 
         public static bool GetStrawberryInGame(int area, EntityID berry)
@@ -202,6 +161,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public static bool GetStrawberryOutGame(int area, EntityID berry)
         {
+            Logger.Log("CelesteArchipelago", "Getting Strawberry Outside Game");
             return CelesteArchipelagoModule.SaveData.Strawberries[area].Contains(berry);
         }
         #endregion

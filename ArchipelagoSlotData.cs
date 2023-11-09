@@ -9,13 +9,15 @@ namespace Celeste.Mod.CelesteArchipelago
 {
     internal class ArchipelagoSlotData
     {
-        public int BerriesRequired { get; set; } = 0;
-        public int HeartsRequired { get; set; } = 15;
-        public int LevelsRequired { get; set; } = 0;
+        public long BerriesRequired { get; set; } = 0;
+        public long CassettesRequired { get; set; } = 0;
+        public long HeartsRequired { get; set; } = 15;
+        public long LevelsRequired { get; set; } = 0;
 
-        private Dictionary<string, PropertyInfo> pythonCSharpMap = new Dictionary<string, PropertyInfo>
+        private Dictionary<string, PropertyInfo> keyPropertyMap = new Dictionary<string, PropertyInfo>
         {
             { "berries_required", typeof(ArchipelagoSlotData).GetProperty("BerriesRequired") },
+            { "cassettes_required", typeof(ArchipelagoSlotData).GetProperty("CassettesRequired") },
             { "hearts_required", typeof(ArchipelagoSlotData).GetProperty("HeartsRequired") },
             { "levels_required", typeof(ArchipelagoSlotData).GetProperty("LevelsRequired") },
         };
@@ -28,14 +30,22 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
-        public void SetSlotDataFromPython(string pythonSlot, object data)
+        public void SetSlotDataFromPython(string key, object data)
         {
-            var property = pythonCSharpMap[pythonSlot];
-
-            if(property.PropertyType == data.GetType())
+            if (!keyPropertyMap.ContainsKey(key))
             {
-                property.SetValue(this, data);
+                Logger.Log("CelesteArchipelago", $"Failed to get slot data with key {key}");
+                return;
             }
+            var property = keyPropertyMap[key];
+
+            if(property.PropertyType != data.GetType())
+            {
+                Logger.Log("CelesteArchipelago", $"Slot data type of {property.PropertyType} for key {key} does not match communicated object type of {data.GetType()}");
+                return;
+            }
+            property.SetValue(this, data);
+            Logger.Log("CelesteArchipelago", $"Slot data for key {key} set to {property.GetValue(this)}");
         }
 
     }

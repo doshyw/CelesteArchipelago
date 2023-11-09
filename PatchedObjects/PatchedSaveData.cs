@@ -11,11 +11,13 @@ namespace Celeste.Mod.CelesteArchipelago
         internal static void Load()
         {
             On.Celeste.SaveData.RegisterCompletion += RegisterCompletion;
+            On.Celeste.SaveData.CheckStrawberry_AreaKey_EntityID += CheckStrawberry;
         }
 
         internal static void Unload()
         {
             On.Celeste.SaveData.RegisterCompletion -= RegisterCompletion;
+            On.Celeste.SaveData.CheckStrawberry_AreaKey_EntityID -= CheckStrawberry;
         }
 
         private static void RegisterCompletion(On.Celeste.SaveData.orig_RegisterCompletion orig, SaveData self, Session session)
@@ -66,6 +68,11 @@ namespace Celeste.Mod.CelesteArchipelago
             }
             CelesteArchipelagoSaveData.SetCompletionOutGame((int)area.Mode, area.ID); // NEW
             session.InArea = false;
+        }
+
+        private static bool CheckStrawberry(On.Celeste.SaveData.orig_CheckStrawberry_AreaKey_EntityID orig, SaveData self, AreaKey area, EntityID strawberry)
+        {
+            return CelesteArchipelagoSaveData.GetStrawberryOutGame(area.ID, strawberry);
         }
 
     }
