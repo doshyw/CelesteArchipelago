@@ -73,14 +73,33 @@ namespace Celeste.Mod.CelesteArchipelago
         public void Init()
         {
             Enabled = true;
-            Log.Add(ChatLine.TestLine);
+        }
+
+        public void DeInit()
+        {
+            Enabled = false;
+            Log = new ChatLog();
         }
 
         public void HandleMessage(LogMessage message)
         {
-            lock(Log)
+            if (Enabled)
             {
-                Log.Add(new ChatLine(message));
+                lock (Log)
+                {
+                    Log.Add(new ChatLine(message));
+                }
+            }
+        }
+
+        public void HandleMessage(string text, Color color)
+        {
+            if (Enabled)
+            {
+                lock (Log)
+                {
+                    Log.Add(new ChatLine(text, color));
+                }
             }
         }
 
@@ -161,11 +180,6 @@ namespace Celeste.Mod.CelesteArchipelago
             Monocle.Draw.SpriteBatch.End();
         }
 
-        public void DisplayText(string text)
-        {
-            Logger.Log("CelesteArchipelago.ChatHandler", text);
-        }
-
         private void RenderRect(float x, float y, float width, float height, Color color)
         {
             int xi = (int)Math.Floor(x);
@@ -175,6 +189,5 @@ namespace Celeste.Mod.CelesteArchipelago
 
             Monocle.Draw.Rect(xi, yi, wi, hi, color);
         }
-
     }
 }

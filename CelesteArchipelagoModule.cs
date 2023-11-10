@@ -37,9 +37,11 @@ namespace Celeste.Mod.CelesteArchipelago {
             // TODO: apply any hooks that should always be active
             PatchedCassette.Load();
             PatchedHeartGem.Load();
+            PatchedHeartGemDoor.Load();
             PatchedLevelSetStats.Load();
             PatchedOuiChapterPanel.Load();
             PatchedOuiChapterSelect.Load();
+            PatchedOuiMainMenu.Load();
             PatchedOuiJournal.Load();
             PatchedSaveData.Load();
             PatchedStrawberry.Load();
@@ -57,9 +59,11 @@ namespace Celeste.Mod.CelesteArchipelago {
             // TODO: unapply any hooks applied in Load()
             PatchedCassette.Unload();
             PatchedHeartGem.Unload();
+            PatchedHeartGemDoor.Unload();
             PatchedLevelSetStats.Unload();
             PatchedOuiChapterPanel.Unload();
             PatchedOuiChapterSelect.Unload();
+            PatchedOuiMainMenu.Unload();
             PatchedOuiJournal.Unload();
             PatchedSaveData.Unload();
             PatchedStrawberry.Unload();

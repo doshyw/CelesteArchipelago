@@ -1,0 +1,240 @@
+Level 1 A-Side Cassette : loadscreen Celeste/1-ForsakenCity 11z 0
+Level 2 A-Side Cassette : loadscreen Celeste/2-OldSite d9 0
+Level 3 A-Side Cassette : loadscreen Celeste/3-CelestialResort 01-c 0
+Level 4 A-Side Cassette : loadscreen Celeste/4-GoldenRidge a-11 0
+Level 5 A-Side Cassette : loadscreen Celeste/5-MirrorTemple b-22 0
+Level 6 A-Side Cassette : loadscreen Celeste/6-Reflection 04e 0
+Level 7 A-Side Cassette : loadscreen Celeste/7-Summit d-03b 0
+Level 9 A-Side Cassette : loadscreen Celeste/9-Core d-11 0
+Level 0 A-Side Completion : loadscreen Celeste/0-Intro x1 0
+Level 1 A-Side Completion : loadscreen Celeste/1-ForsakenCity s1 0
+Level 1 B-Side Completion : loadscreen Celeste/1-ForsakenCity end 1
+Level 1 C-Side Completion : loadscreen Celeste/1-ForsakenCity 02 2
+Level 2 A-Side Completion : loadscreen Celeste/2-OldSite start 0
+Level 2 B-Side Completion : loadscreen Celeste/2-OldSite start 1
+Level 2 C-Side Completion : loadscreen Celeste/2-OldSite 02 2
+Level 3 A-Side Completion : loadscreen Celeste/3-CelestialResort s3 0
+Level 3 B-Side Completion : loadscreen Celeste/3-CelestialResort end 1
+Level 3 C-Side Completion : loadscreen Celeste/3-CelestialResort 02 2
+Level 4 A-Side Completion : loadscreen Celeste/4-GoldenRidge d-10 0
+Level 4 B-Side Completion : loadscreen Celeste/4-GoldenRidge end 1
+Level 4 C-Side Completion : loadscreen Celeste/4-GoldenRidge 02 2
+Level 5 A-Side Completion : loadscreen Celeste/5-MirrorTemple void 0
+Level 5 B-Side Completion : loadscreen Celeste/5-MirrorTemple start 1
+Level 5 C-Side Completion : loadscreen Celeste/5-MirrorTemple 02 2
+Level 6 A-Side Completion : loadscreen Celeste/6-Reflection start 0
+Level 6 B-Side Completion : loadscreen Celeste/6-Reflection d-05 1
+Level 6 C-Side Completion : loadscreen Celeste/6-Reflection 02 2
+Level 7 A-Side Completion : loadscreen Celeste/7-Summit g-03 0
+Level 7 B-Side Completion : loadscreen Celeste/7-Summit g-03 1
+Level 7 C-Side Completion : loadscreen Celeste/7-Summit 03 2
+Level 8 A-Side Completion : loadscreen Celeste/8-Epilogue secret 0
+Level 9 A-Side Completion : loadscreen Celeste/9-Core space 0
+Level 9 B-Side Completion : loadscreen Celeste/9-Core space 1
+Level 9 C-Side Completion : loadscreen Celeste/9-Core intro 2
+Level 10 A-Side Completion : loadscreen Celeste/LostLevels j-19 0
+Level 1 A-Side Crystal Heart : loadscreen Celeste/1-ForsakenCity s1 0
+Level 1 B-Side Crystal Heart : loadscreen Celeste/1-ForsakenCity end 1
+Level 1 C-Side Crystal Heart : loadscreen Celeste/1-ForsakenCity 02 2
+Level 2 A-Side Crystal Heart : loadscreen Celeste/2-OldSite end_s1 0
+Level 2 A-Side Crystal Heart : loadscreen Celeste/2-OldSite s2 0
+Level 2 B-Side Crystal Heart : loadscreen Celeste/2-OldSite end 1
+Level 2 C-Side Crystal Heart : loadscreen Celeste/2-OldSite 02 2
+Level 3 A-Side Crystal Heart : loadscreen Celeste/3-CelestialResort 11-c 0
+Level 3 B-Side Crystal Heart : loadscreen Celeste/3-CelestialResort end 1
+Level 3 C-Side Crystal Heart : loadscreen Celeste/3-CelestialResort 02 2
+Level 4 A-Side Crystal Heart : loadscreen Celeste/4-GoldenRidge b-sec 0
+Level 4 B-Side Crystal Heart : loadscreen Celeste/4-GoldenRidge end 1
+Level 4 C-Side Crystal Heart : loadscreen Celeste/4-GoldenRidge 02 2
+Level 5 A-Side Crystal Heart : loadscreen Celeste/5-MirrorTemple b-15 0
+Level 5 B-Side Crystal Heart : loadscreen Celeste/5-MirrorTemple d-05 1
+Level 5 C-Side Crystal Heart : loadscreen Celeste/5-MirrorTemple 02 2
+Level 6 B-Side Crystal Heart : loadscreen Celeste/6-Reflection d-05 1
+Level 6 C-Side Crystal Heart : loadscreen Celeste/6-Reflection 02 2
+Level 7 A-Side Crystal Heart : loadscreen Celeste/7-Summit g-00b 0
+Level 7 B-Side Crystal Heart : loadscreen Celeste/7-Summit g-03 1
+Level 7 C-Side Crystal Heart : loadscreen Celeste/7-Summit 03 2
+Level 9 A-Side Crystal Heart : loadscreen Celeste/9-Core space 0
+Level 9 A-Side Crystal Heart Door : loadscreen Celeste/9-Core 02 0
+Level 9 B-Side Crystal Heart : loadscreen Celeste/9-Core space 1
+Level 9 B-Side Crystal Heart Door : loadscreen Celeste/9-Core 01 1
+Level 9 C-Side Crystal Heart : loadscreen Celeste/9-Core 02 2
+Level 9 C-Side Crystal Heart Door : loadscreen Celeste/9-Core intro 2
+Level 10 A-Side Crystal Heart : loadscreen Celeste/LostLevels e-08 0
+Level 10 A-Side Crystal Heart Door : loadscreen Celeste/LostLevels f-door 0
+Level 1 A-Side Strawberry 1 : loadscreen Celeste/1-ForsakenCity 2 0
+Level 1 A-Side Strawberry 2 : loadscreen Celeste/1-ForsakenCity 3 0
+Level 1 A-Side Strawberry 3 : loadscreen Celeste/1-ForsakenCity 3b 0
+Level 1 A-Side Strawberry 4 : loadscreen Celeste/1-ForsakenCity 5z 0
+Level 1 A-Side Strawberry 5 : loadscreen Celeste/1-ForsakenCity 5 0
+Level 1 A-Side Strawberry 6 : loadscreen Celeste/1-ForsakenCity 5a 0
+Level 1 A-Side Strawberry 7 : loadscreen Celeste/1-ForsakenCity 7zb 0
+Level 1 A-Side Strawberry 8 : loadscreen Celeste/1-ForsakenCity 6 0
+Level 1 A-Side Strawberry 9 : loadscreen Celeste/1-ForsakenCity s1 0
+Level 1 A-Side Strawberry 10 : loadscreen Celeste/1-ForsakenCity 7z 0
+Level 1 A-Side Strawberry 11 : loadscreen Celeste/1-ForsakenCity 8zb 0
+Level 1 A-Side Strawberry 12 : loadscreen Celeste/1-ForsakenCity 7a 0
+Level 1 A-Side Strawberry 13 : loadscreen Celeste/1-ForsakenCity 9z 0
+Level 1 A-Side Strawberry 14 : loadscreen Celeste/1-ForsakenCity 8b 0
+Level 1 A-Side Strawberry 15 : loadscreen Celeste/1-ForsakenCity 9 0
+Level 1 A-Side Strawberry 16 : loadscreen Celeste/1-ForsakenCity 10zb 0
+Level 1 A-Side Strawberry 17 : loadscreen Celeste/1-ForsakenCity 11 0
+Level 1 A-Side Strawberry 18 : loadscreen Celeste/1-ForsakenCity 9b 0
+Level 1 A-Side Strawberry 19 : loadscreen Celeste/1-ForsakenCity 9c 0
+Level 1 A-Side Strawberry 20 : loadscreen Celeste/1-ForsakenCity 12z 0
+Level 2 A-Side Strawberry 1 : loadscreen Celeste/2-OldSite d3 0
+Level 2 A-Side Strawberry 2 : loadscreen Celeste/2-OldSite d2 0
+Level 2 A-Side Strawberry 3 : loadscreen Celeste/2-OldSite d1 0
+Level 2 A-Side Strawberry 4 : loadscreen Celeste/2-OldSite d6 0
+Level 2 A-Side Strawberry 5 : loadscreen Celeste/2-OldSite d0 0
+Level 2 A-Side Strawberry 6 : loadscreen Celeste/2-OldSite d4 0
+Level 2 A-Side Strawberry 7 : loadscreen Celeste/2-OldSite d5 0
+Level 2 A-Side Strawberry 8 : loadscreen Celeste/2-OldSite d2 0
+Level 2 A-Side Strawberry 9 : loadscreen Celeste/2-OldSite 1 0
+Level 2 A-Side Strawberry 10 : loadscreen Celeste/2-OldSite 4 0
+Level 2 A-Side Strawberry 11 : loadscreen Celeste/2-OldSite 5 0
+Level 2 A-Side Strawberry 12 : loadscreen Celeste/2-OldSite 8 0
+Level 2 A-Side Strawberry 13 : loadscreen Celeste/2-OldSite 9b 0
+Level 2 A-Side Strawberry 14 : loadscreen Celeste/2-OldSite 9 0
+Level 2 A-Side Strawberry 15 : loadscreen Celeste/2-OldSite 10 0
+Level 2 A-Side Strawberry 16 : loadscreen Celeste/2-OldSite 12c 0
+Level 2 A-Side Strawberry 17 : loadscreen Celeste/2-OldSite 12d 0
+Level 2 A-Side Strawberry 18 : loadscreen Celeste/2-OldSite end_3c 0
+Level 3 A-Side Strawberry 1 : loadscreen Celeste/3-CelestialResort s2 0
+Level 3 A-Side Strawberry 2 : loadscreen Celeste/3-CelestialResort s2 0
+Level 3 A-Side Strawberry 3 : loadscreen Celeste/3-CelestialResort 00-a 0
+Level 3 A-Side Strawberry 4 : loadscreen Celeste/3-CelestialResort 00-b 0
+Level 3 A-Side Strawberry 5 : loadscreen Celeste/3-CelestialResort s3 0
+Level 3 A-Side Strawberry 6 : loadscreen Celeste/3-CelestialResort 04-b 0
+Level 3 A-Side Strawberry 7 : loadscreen Celeste/3-CelestialResort 06-a 0
+Level 3 A-Side Strawberry 8 : loadscreen Celeste/3-CelestialResort 06-b 0
+Level 3 A-Side Strawberry 9 : loadscreen Celeste/3-CelestialResort 05-c 0
+Level 3 A-Side Strawberry 10 : loadscreen Celeste/3-CelestialResort 06-c 0
+Level 3 A-Side Strawberry 11 : loadscreen Celeste/3-CelestialResort 07-b 0
+Level 3 A-Side Strawberry 12 : loadscreen Celeste/3-CelestialResort 12-c 0
+Level 3 A-Side Strawberry 13 : loadscreen Celeste/3-CelestialResort 11-d 0
+Level 3 A-Side Strawberry 14 : loadscreen Celeste/3-CelestialResort 13-b 0
+Level 3 A-Side Strawberry 15 : loadscreen Celeste/3-CelestialResort 13-x 0
+Level 3 A-Side Strawberry 16 : loadscreen Celeste/3-CelestialResort 12-y 0
+Level 3 A-Side Strawberry 17 : loadscreen Celeste/3-CelestialResort 10-y 0
+Level 3 A-Side Strawberry 18 : loadscreen Celeste/3-CelestialResort 08-x 0
+Level 3 A-Side Strawberry 19 : loadscreen Celeste/3-CelestialResort 06-d 0
+Level 3 A-Side Strawberry 20 : loadscreen Celeste/3-CelestialResort 04-c 0
+Level 3 A-Side Strawberry 21 : loadscreen Celeste/3-CelestialResort 03-b 0
+Level 3 A-Side Strawberry 22 : loadscreen Celeste/3-CelestialResort 03-b 0
+Level 3 A-Side Strawberry 23 : loadscreen Celeste/3-CelestialResort roof03 0
+Level 3 A-Side Strawberry 24 : loadscreen Celeste/3-CelestialResort roof06 0
+Level 3 A-Side Strawberry 25 : loadscreen Celeste/3-CelestialResort roof06 0
+Level 4 A-Side Strawberry 1 : loadscreen Celeste/4-GoldenRidge a-01x 0
+Level 4 A-Side Strawberry 2 : loadscreen Celeste/4-GoldenRidge a-02 0
+Level 4 A-Side Strawberry 3 : loadscreen Celeste/4-GoldenRidge a-03 0
+Level 4 A-Side Strawberry 4 : loadscreen Celeste/4-GoldenRidge a-04 0
+Level 4 A-Side Strawberry 5 : loadscreen Celeste/4-GoldenRidge a-06 0
+Level 4 A-Side Strawberry 6 : loadscreen Celeste/4-GoldenRidge a-07 0
+Level 4 A-Side Strawberry 7 : loadscreen Celeste/4-GoldenRidge a-10 0
+Level 4 A-Side Strawberry 8 : loadscreen Celeste/4-GoldenRidge a-09 0
+Level 4 A-Side Strawberry 9 : loadscreen Celeste/4-GoldenRidge b-01 0
+Level 4 A-Side Strawberry 10 : loadscreen Celeste/4-GoldenRidge b-01 0
+Level 4 A-Side Strawberry 11 : loadscreen Celeste/4-GoldenRidge b-02 0
+Level 4 A-Side Strawberry 12 : loadscreen Celeste/4-GoldenRidge b-03 0
+Level 4 A-Side Strawberry 13 : loadscreen Celeste/4-GoldenRidge b-07 0
+Level 4 A-Side Strawberry 14 : loadscreen Celeste/4-GoldenRidge b-04 0
+Level 4 A-Side Strawberry 15 : loadscreen Celeste/4-GoldenRidge b-02 0
+Level 4 A-Side Strawberry 16 : loadscreen Celeste/4-GoldenRidge b-secb 0
+Level 4 A-Side Strawberry 17 : loadscreen Celeste/4-GoldenRidge b-08 0
+Level 4 A-Side Strawberry 18 : loadscreen Celeste/4-GoldenRidge c-01 0
+Level 4 A-Side Strawberry 19 : loadscreen Celeste/4-GoldenRidge c-00 0
+Level 4 A-Side Strawberry 20 : loadscreen Celeste/4-GoldenRidge c-05 0
+Level 4 A-Side Strawberry 21 : loadscreen Celeste/4-GoldenRidge c-06b 0
+Level 4 A-Side Strawberry 22 : loadscreen Celeste/4-GoldenRidge c-06 0
+Level 4 A-Side Strawberry 23 : loadscreen Celeste/4-GoldenRidge c-08 0
+Level 4 A-Side Strawberry 24 : loadscreen Celeste/4-GoldenRidge c-10 0
+Level 4 A-Side Strawberry 25 : loadscreen Celeste/4-GoldenRidge d-00b 0
+Level 4 A-Side Strawberry 26 : loadscreen Celeste/4-GoldenRidge d-01 0
+Level 4 A-Side Strawberry 27 : loadscreen Celeste/4-GoldenRidge d-04 0
+Level 4 A-Side Strawberry 28 : loadscreen Celeste/4-GoldenRidge d-07 0
+Level 4 A-Side Strawberry 29 : loadscreen Celeste/4-GoldenRidge d-09 0
+Level 5 A-Side Strawberry 1 : loadscreen Celeste/5-MirrorTemple a-00x 0
+Level 5 A-Side Strawberry 2 : loadscreen Celeste/5-MirrorTemple a-01 0
+Level 5 A-Side Strawberry 3 : loadscreen Celeste/5-MirrorTemple a-01 0
+Level 5 A-Side Strawberry 4 : loadscreen Celeste/5-MirrorTemple a-04 0
+Level 5 A-Side Strawberry 5 : loadscreen Celeste/5-MirrorTemple a-03 0
+Level 5 A-Side Strawberry 6 : loadscreen Celeste/5-MirrorTemple a-02 0
+Level 5 A-Side Strawberry 7 : loadscreen Celeste/5-MirrorTemple a-05 0
+Level 5 A-Side Strawberry 8 : loadscreen Celeste/5-MirrorTemple a-07 0
+Level 5 A-Side Strawberry 9 : loadscreen Celeste/5-MirrorTemple a-06 0
+Level 5 A-Side Strawberry 10 : loadscreen Celeste/5-MirrorTemple a-14 0
+Level 5 A-Side Strawberry 11 : loadscreen Celeste/5-MirrorTemple a-11 0
+Level 5 A-Side Strawberry 12 : loadscreen Celeste/5-MirrorTemple a-15 0
+Level 5 A-Side Strawberry 13 : loadscreen Celeste/5-MirrorTemple b-18 0
+Level 5 A-Side Strawberry 14 : loadscreen Celeste/5-MirrorTemple b-01c 0
+Level 5 A-Side Strawberry 15 : loadscreen Celeste/5-MirrorTemple b-21 0
+Level 5 A-Side Strawberry 16 : loadscreen Celeste/5-MirrorTemple b-20 0
+Level 5 A-Side Strawberry 17 : loadscreen Celeste/5-MirrorTemple b-20 0
+Level 5 A-Side Strawberry 18 : loadscreen Celeste/5-MirrorTemple b-03 0
+Level 5 A-Side Strawberry 19 : loadscreen Celeste/5-MirrorTemple b-05 0
+Level 5 A-Side Strawberry 20 : loadscreen Celeste/5-MirrorTemple b-10 0
+Level 5 A-Side Strawberry 21 : loadscreen Celeste/5-MirrorTemple b-12 0
+Level 5 A-Side Strawberry 22 : loadscreen Celeste/5-MirrorTemple b-17 0
+Level 5 A-Side Strawberry 23 : loadscreen Celeste/5-MirrorTemple b-17 0
+Level 5 A-Side Strawberry 24 : loadscreen Celeste/5-MirrorTemple c-08 0
+Level 5 A-Side Strawberry 25 : loadscreen Celeste/5-MirrorTemple d-04 0
+Level 5 A-Side Strawberry 26 : loadscreen Celeste/5-MirrorTemple d-04 0
+Level 5 A-Side Strawberry 27 : loadscreen Celeste/5-MirrorTemple d-13 0
+Level 5 A-Side Strawberry 28 : loadscreen Celeste/5-MirrorTemple d-15 0
+Level 5 A-Side Strawberry 29 : loadscreen Celeste/5-MirrorTemple d-15 0
+Level 5 A-Side Strawberry 30 : loadscreen Celeste/5-MirrorTemple d-19 0
+Level 5 A-Side Strawberry 31 : loadscreen Celeste/5-MirrorTemple e-06 0
+Level 7 A-Side Strawberry 1 : loadscreen Celeste/7-Summit a-02b 0
+Level 7 A-Side Strawberry 2 : loadscreen Celeste/7-Summit a-04b 0
+Level 7 A-Side Strawberry 3 : loadscreen Celeste/7-Summit a-04b 0
+Level 7 A-Side Strawberry 4 : loadscreen Celeste/7-Summit a-05 0
+Level 7 A-Side Strawberry 5 : loadscreen Celeste/7-Summit b-02 0
+Level 7 A-Side Strawberry 6 : loadscreen Celeste/7-Summit b-02b 0
+Level 7 A-Side Strawberry 7 : loadscreen Celeste/7-Summit b-02e 0
+Level 7 A-Side Strawberry 8 : loadscreen Celeste/7-Summit b-04 0
+Level 7 A-Side Strawberry 9 : loadscreen Celeste/7-Summit b-08 0
+Level 7 A-Side Strawberry 10 : loadscreen Celeste/7-Summit b-09 0
+Level 7 A-Side Strawberry 11 : loadscreen Celeste/7-Summit c-03b 0
+Level 7 A-Side Strawberry 12 : loadscreen Celeste/7-Summit c-05 0
+Level 7 A-Side Strawberry 13 : loadscreen Celeste/7-Summit c-06b 0
+Level 7 A-Side Strawberry 14 : loadscreen Celeste/7-Summit c-07b 0
+Level 7 A-Side Strawberry 15 : loadscreen Celeste/7-Summit c-08 0
+Level 7 A-Side Strawberry 16 : loadscreen Celeste/7-Summit c-09 0
+Level 7 A-Side Strawberry 17 : loadscreen Celeste/7-Summit d-00 0
+Level 7 A-Side Strawberry 18 : loadscreen Celeste/7-Summit d-01c 0
+Level 7 A-Side Strawberry 19 : loadscreen Celeste/7-Summit d-01d 0
+Level 7 A-Side Strawberry 20 : loadscreen Celeste/7-Summit d-03 0
+Level 7 A-Side Strawberry 21 : loadscreen Celeste/7-Summit d-04 0
+Level 7 A-Side Strawberry 22 : loadscreen Celeste/7-Summit d-07 0
+Level 7 A-Side Strawberry 23 : loadscreen Celeste/7-Summit d-08 0
+Level 7 A-Side Strawberry 24 : loadscreen Celeste/7-Summit d-10b 0
+Level 7 A-Side Strawberry 25 : loadscreen Celeste/7-Summit e-02 0
+Level 7 A-Side Strawberry 26 : loadscreen Celeste/7-Summit e-05 0
+Level 7 A-Side Strawberry 27 : loadscreen Celeste/7-Summit e-07 0
+Level 7 A-Side Strawberry 28 : loadscreen Celeste/7-Summit e-09 0
+Level 7 A-Side Strawberry 29 : loadscreen Celeste/7-Summit e-12 0
+Level 7 A-Side Strawberry 30 : loadscreen Celeste/7-Summit e-11 0
+Level 7 A-Side Strawberry 31 : loadscreen Celeste/7-Summit e-10 0
+Level 7 A-Side Strawberry 32 : loadscreen Celeste/7-Summit e-13 0
+Level 7 A-Side Strawberry 33 : loadscreen Celeste/7-Summit f-01 0
+Level 7 A-Side Strawberry 34 : loadscreen Celeste/7-Summit f-00 0
+Level 7 A-Side Strawberry 35 : loadscreen Celeste/7-Summit f-07 0
+Level 7 A-Side Strawberry 36 : loadscreen Celeste/7-Summit f-08b 0
+Level 7 A-Side Strawberry 37 : loadscreen Celeste/7-Summit f-08c 0
+Level 7 A-Side Strawberry 38 : loadscreen Celeste/7-Summit f-11 0
+Level 7 A-Side Strawberry 39 : loadscreen Celeste/7-Summit f-11 0
+Level 7 A-Side Strawberry 40 : loadscreen Celeste/7-Summit f-11 0
+Level 7 A-Side Strawberry 41 : loadscreen Celeste/7-Summit g-00b 0
+Level 7 A-Side Strawberry 42 : loadscreen Celeste/7-Summit g-00b 0
+Level 7 A-Side Strawberry 43 : loadscreen Celeste/7-Summit g-00b 0
+Level 7 A-Side Strawberry 44 : loadscreen Celeste/7-Summit g-01 0
+Level 7 A-Side Strawberry 45 : loadscreen Celeste/7-Summit g-01 0
+Level 7 A-Side Strawberry 46 : loadscreen Celeste/7-Summit g-01 0
+Level 7 A-Side Strawberry 47 : loadscreen Celeste/7-Summit g-03 0
+Level 9 A-Side Strawberry 1 : loadscreen Celeste/9-Core b-06 0
+Level 9 A-Side Strawberry 2 : loadscreen Celeste/9-Core c-00b 0
+Level 9 A-Side Strawberry 3 : loadscreen Celeste/9-Core c-02 0
+Level 9 A-Side Strawberry 4 : loadscreen Celeste/9-Core c-03b 0
+Level 9 A-Side Strawberry 5 : loadscreen Celeste/9-Core d-06 0
+Level 10 A-Side Strawberry 100 : loadscreen Celeste/LostLevels j-19 0

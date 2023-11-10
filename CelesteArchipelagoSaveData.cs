@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -65,6 +66,25 @@ namespace Celeste.Mod.CelesteArchipelago
             return false;
         }
 
+        public static bool IsHeartGemDoorOpenable()
+        {
+            var slotData = ArchipelagoConnection.Instance.slotData;
+
+            //Logger.Log("CelesteArchipelago", $"TotalHeartGemsInGame: {TotalHeartGemsInGame()}");
+            //Logger.Log("CelesteArchipelago", $"TotalStrawberriesInGame: {TotalStrawberriesInGame()}");
+            //Logger.Log("CelesteArchipelago", $"TotalCompletionsInGame: {TotalCompletionsInGame()}");
+            //Logger.Log("CelesteArchipelago", $"TotalCassettesInGame: {TotalCassettesInGame()}");
+            //Logger.Log("CelesteArchipelago", $"slotData.HeartsRequired: {slotData.HeartsRequired}");
+            //Logger.Log("CelesteArchipelago", $"slotData.BerriesRequired: {slotData.BerriesRequired}");
+            //Logger.Log("CelesteArchipelago", $"slotData.LevelsRequired: {slotData.LevelsRequired}");
+            //Logger.Log("CelesteArchipelago", $"slotData.CassettesRequired: {slotData.CassettesRequired}");
+
+            return TotalHeartGemsInGame() >= slotData.HeartsRequired
+                && TotalStrawberriesInGame() >= slotData.BerriesRequired
+                && TotalCompletionsInGame() >= slotData.LevelsRequired
+                && TotalCassettesInGame() >= slotData.CassettesRequired;
+        }
+
         #region Cassettes
         public static void SetCassetteInGame(int area)
         {
@@ -86,6 +106,19 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             return CelesteArchipelagoModule.SaveData.CassettesOutside.Contains(area);
         }
+
+        public static int TotalCassettesInGame()
+        {
+            return Enumerable.Range(1, SaveData.Instance.MaxArea)
+                .Count(area => GetCassetteInGame(area));
+        }
+
+        public static int TotalCassettesOutGame()
+        {
+            return Enumerable.Range(1, SaveData.Instance.MaxArea)
+                .Count(area => GetCassetteOutGame(area));
+        }
+
         #endregion
 
         #region Completions
@@ -108,6 +141,21 @@ namespace Celeste.Mod.CelesteArchipelago
         public static bool GetCompletionOutGame(int mode, int area)
         {
             return CelesteArchipelagoModule.SaveData.Completions[mode].Contains(area);
+        }
+
+        public static int TotalCompletionsInGame()
+        {
+            return Enumerable.Range(1, SaveData.Instance.MaxArea)
+                .Select(area => SaveData.Instance.Areas_Safe[area].Modes)
+                .SelectMany(modeArr => modeArr.Select(mode => mode.Completed))
+                .Count(val => val);
+        }
+
+        public static int TotalCompletionsOutGame()
+        {
+            return CelesteArchipelagoModule.SaveData.Completions[0].Count()
+                + CelesteArchipelagoModule.SaveData.Completions[1].Count()
+                + CelesteArchipelagoModule.SaveData.Completions[2].Count();
         }
         #endregion
 
@@ -132,6 +180,21 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             return CelesteArchipelagoModule.SaveData.HeartGems[mode].Contains(area);
         }
+
+        public static int TotalHeartGemsInGame()
+        {
+            return Enumerable.Range(1, SaveData.Instance.MaxArea)
+                .Select(area => SaveData.Instance.Areas_Safe[area].Modes)
+                .SelectMany(modeArr => modeArr.Select(mode => mode.HeartGem))
+                .Count(val => val);
+        }
+
+        public static int TotalHeartGemsOutGame()
+        {
+            return CelesteArchipelagoModule.SaveData.HeartGems[0].Count()
+                + CelesteArchipelagoModule.SaveData.HeartGems[1].Count()
+                + CelesteArchipelagoModule.SaveData.HeartGems[2].Count();
+        }
         #endregion
 
         #region Strawberries
@@ -149,7 +212,6 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public static void SetStrawberryOutGame(int area, EntityID berry)
         {
-            Logger.Log("CelesteArchipelago", "Setting Strawberry Outside Game");
             CelesteArchipelagoModule.SaveData.Strawberries[area].Add(berry);
             ArchipelagoConnection.Instance.CheckLocation(new ArchipelagoNetworkItem(ItemType.STRAWBERRY, area, 0, berry));
         }
@@ -161,9 +223,24 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public static bool GetStrawberryOutGame(int area, EntityID berry)
         {
-            Logger.Log("CelesteArchipelago", "Getting Strawberry Outside Game");
             return CelesteArchipelagoModule.SaveData.Strawberries[area].Contains(berry);
         }
+
+        public static int TotalStrawberriesInGame()
+        {
+            return Enumerable.Range(1, SaveData.Instance.MaxArea)
+                .Select(area => SaveData.Instance.Areas_Safe[area].Modes)
+                .SelectMany(modeArr => modeArr.Select(mode => mode.Strawberries.Count()))
+                .Sum();
+        }
+
+        public static int TotalStrawberriesOutGame()
+        {
+            return Enumerable.Range(1, SaveData.Instance.MaxArea)
+                .Select(area => CelesteArchipelagoModule.SaveData.Strawberries[area].Count())
+                .Sum();
+        }
         #endregion
+
     }
 }

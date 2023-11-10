@@ -84,6 +84,11 @@ namespace Celeste.Mod.CelesteArchipelago
             Scene.Add(menu);
         }
 
+        public void SetFocusedMenu(bool focused)
+        {
+            menu.Focused = focused;
+        }
+
         public override IEnumerator Enter(Oui from)
         {
             ReloadMenu();

@@ -17,10 +17,10 @@ namespace Celeste.Mod.CelesteArchipelago
 
     internal class ArchipelagoNetworkItem
     {
-        const int OFFSET_BASE = 8000000;
-        const int OFFSET_KIND = 10000;
-        const int OFFSET_LEVEL = 1000;
-        const int OFFSET_SIDE = 100;
+        public const int OFFSET_BASE = 8000000;
+        public const int OFFSET_KIND = 20000;
+        public const int OFFSET_LEVEL = 1000;
+        public const int OFFSET_SIDE = 100;
 
         public ItemType type;
         public int area;
@@ -72,7 +72,7 @@ namespace Celeste.Mod.CelesteArchipelago
             }
             else
             {
-                offset = GetStrawberryOffset(strawberry.Value) % OFFSET_SIDE;
+                offset = (GetStrawberryOffset(strawberry.Value) ?? 99) % OFFSET_SIDE;
                 this.strawberry = GetStrawberryEntityID(area, mode, offset);
             }
             
@@ -113,24 +113,34 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
-        private static EntityID GetStrawberryEntityID(int area, int mode, int offset)
+        private static EntityID? GetStrawberryEntityID(int area, int mode, int offset)
         {
             if (StrawberryMap == null)
             {
                 BuildStrawberryMap();
             }
 
-            return StrawberryMap[area * OFFSET_LEVEL + mode * OFFSET_SIDE + offset];
+            int index = area * OFFSET_LEVEL + mode * OFFSET_SIDE + offset;
+            if (StrawberryMap.ContainsKey(index))
+            {
+                return StrawberryMap[index];
+            }
+
+            return null;
         }
 
-        private static int GetStrawberryOffset(EntityID strawberry)
+        public static int? GetStrawberryOffset(EntityID strawberry)
         {
             if (StrawberryMap == null)
             {
                 BuildStrawberryMap();
             }
 
-            return StrawberryReverseMap[strawberry.Key];
+            if(StrawberryReverseMap.ContainsKey(strawberry.Key))
+            {
+                return StrawberryReverseMap[strawberry.Key];
+            }
+            return null;
         }
     }
 }

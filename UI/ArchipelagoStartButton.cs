@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.CelesteArchipelago.PatchedObjects;
+﻿using Archipelago.MultiClient.Net;
+using Celeste.Mod.CelesteArchipelago.PatchedObjects;
 using Monocle;
 using Newtonsoft.Json.Linq;
 using System;
@@ -74,17 +75,28 @@ namespace Celeste.Mod.CelesteArchipelago
                 return;
             }
 
+            CelesteArchipelagoModule.Instance.chatHandler = new ChatHandler(Celeste.Instance);
+            Celeste.Instance.Components.Add(CelesteArchipelagoModule.Instance.chatHandler);
+            CelesteArchipelagoModule.Instance.chatHandler.Init();
+
+            ((OuiArchipelago)entryOui).SetFocusedMenu(false);
+            new ArchipelagoConnection((result) => OnConnectionAttempt(result, entryOui, saveData));
+        }
+
+        private void OnConnectionAttempt(LoginResult result, Oui entryOui, SaveData saveData)
+        {
+            ((OuiArchipelago)entryOui).SetFocusedMenu(true);
+            if (!result.Successful)
+            {
+                return;
+            }
+
             Audio.Play("event:/ui/main/savefile_begin");
             SaveData.Start(saveData, saveID);
             CelesteArchipelagoModule.SaveData.UUID = CelesteArchipelagoModule.Settings.UUID;
             PatchedOuiChapterSelect.HasChanges = true;
             SaveData.Instance.AssistModeChecks();
-
-            CelesteArchipelagoModule.Instance.chatHandler = new ChatHandler(Celeste.Instance);
-            Celeste.Instance.Components.Add(CelesteArchipelagoModule.Instance.chatHandler);
-            CelesteArchipelagoModule.Instance.chatHandler.Init();
-
-            new ArchipelagoConnection();
+            ArchipelagoConnection.Instance.Init();
 
             if (SaveData.Instance.CurrentSession_Safe != null && SaveData.Instance.CurrentSession_Safe.InArea)
             {
@@ -114,7 +126,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 Audio.SetMusic(null);
                 Audio.SetAmbience(null);
                 SaveData.Instance.UnlockedAreas_Safe = SaveData.Instance.MaxArea;
-                for (int i = 1; i < SaveData.Instance.MaxArea; i++) 
+                for (int i = 1; i < SaveData.Instance.MaxArea; i++)
                 {
                     if (AreaData.Areas[i].HasMode(AreaMode.BSide))
                     {
