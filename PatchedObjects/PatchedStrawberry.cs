@@ -18,7 +18,6 @@ namespace Celeste.Mod.CelesteArchipelago
         private delegate void orig_Strawberry_orig_OnCollect(Strawberry self);
         internal static void Load()
         {
-            On.Celeste.Strawberry.CollectRoutine += CollectRoutine;
             hook_Strawberry_orig_OnCollect = new Hook(
                 typeof(Strawberry).GetMethod("orig_OnCollect"),
                 typeof(PatchedStrawberry).GetMethod("orig_OnCollect", BindingFlags.NonPublic | BindingFlags.Static)
@@ -34,47 +33,8 @@ namespace Celeste.Mod.CelesteArchipelago
 
         internal static void Unload()
         {
-            On.Celeste.Strawberry.CollectRoutine -= CollectRoutine;
             hook_Strawberry_orig_OnCollect.Dispose();
             On.Celeste.Strawberry.ctor -= ctor;
-        }
-
-        public static IEnumerator CollectRoutine(On.Celeste.Strawberry.orig_CollectRoutine orig, Strawberry self, int collectIndex)
-        {
-            Logger.Log("CelesteArchipelago", "Entering Strawberry.CollectRoutine");
-
-            DynamicData strawberry = DynamicData.For(self);
-            var isGhostBerry = strawberry.Get<bool>("isGhostBerry");
-            var sprite = strawberry.Get<Sprite>("sprite");
-
-            _ = self.Scene;
-            self.Tag = Tags.TransitionUpdate;
-            self.Depth = -2000010;
-            int num = 0;
-            if (self.Moon)
-            {
-                Logger.Log("CelesteArchipelago", "Got Moon Berry");
-                num = 3;
-            }
-            else if (isGhostBerry)
-            {
-                Logger.Log("CelesteArchipelago", "Got Ghost Berry");
-                num = 1;
-            }
-            else if (self.Golden)
-            {
-                Logger.Log("CelesteArchipelago", "Got Golden Berry");
-                num = 2;
-            }
-            Audio.Play("event:/game/general/strawberry_get", self.Position, "colour", num, "count", collectIndex);
-            Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
-            sprite.Play("collect");
-            while (sprite.Animating)
-            {
-                yield return null;
-            }
-            // self.Scene.Add(new StrawberryPoints(self.Position, isGhostBerry, collectIndex, self.Moon));
-            self.RemoveSelf();
         }
 
         private static void orig_OnCollect(orig_Strawberry_orig_OnCollect orig, Strawberry self)
