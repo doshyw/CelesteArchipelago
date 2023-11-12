@@ -20,6 +20,7 @@ namespace Celeste.Mod.CelesteArchipelago
             { 7, new HashSet<EntityID>() },
             { 8, new HashSet<EntityID>() },
             { 9, new HashSet<EntityID>() },
+            { 10, new HashSet<EntityID>() },
         };
         public HashSet<int> CassettesInside { get; set; } = new HashSet<int>();
         public HashSet<int> CassettesOutside { get; set; } = new HashSet<int>();
