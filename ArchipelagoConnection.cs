@@ -2,6 +2,7 @@
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
+using Archipelago.MultiClient.Net.Packets;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Celeste.Mod.CelesteArchipelago
         private ArchipelagoSession session;
         public ArchipelagoSlotData slotData;
         public LoginSuccessful login;
+        public VictoryCondition victoryCondition;
 
         public ArchipelagoConnection(Action<LoginResult> onLogin)
         {
@@ -93,6 +95,7 @@ namespace Celeste.Mod.CelesteArchipelago
         public void Init()
         {
             slotData = new ArchipelagoSlotData(login.SlotData);
+            victoryCondition = (VictoryCondition)slotData.VictoryCondition;
             session.Items.ItemReceived += AddItemCallback;
             AddItemCallback(session.Items);
         }
@@ -131,11 +134,35 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             Logger.Log("CelesteArchipelago", $"Checking location {session.Locations.GetLocationNameFromId(location.ID) ?? location.ID.ToString()}");
             session.Locations.CompleteLocationChecks(location.ID);
+
+            Logger.Log("CelesteArchipelago", $"Area: {location.area}");
+            Logger.Log("CelesteArchipelago", $"Mode: {location.mode}");
+            Logger.Log("CelesteArchipelago", $"VictoryCondition: {victoryCondition}");
+            Logger.Log("CelesteArchipelago", $"Type: {location.type}");
+
+            bool isVictory = location.type == ItemType.COMPLETION && ( 
+                (location.area == 10 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_9_FAREWELL)
+                || (location.area == 9 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_8_CORE)
+                || (location.area == 7 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_7_SUMMIT)
+            );
+
+            if (isVictory)
+            {
+                OnVictory();
+            }
         }
 
         static void OnMessageReceived(LogMessage message)
         {
             CelesteArchipelagoModule.Instance.chatHandler.HandleMessage(message);
+        }
+
+        private void OnVictory()
+        {
+            Logger.Log("CelesteArchipelago", "Sending Victory Condition.");
+            var statusUpdatePacket = new StatusUpdatePacket();
+            statusUpdatePacket.Status = ArchipelagoClientState.ClientGoal;
+            session.Socket.SendPacket(statusUpdatePacket);
         }
 
     }
