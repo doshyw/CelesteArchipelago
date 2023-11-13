@@ -48,7 +48,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 return orig(self);
             }
 
-            return (CelesteArchipelagoSaveData.IsHeartGemDoorOpenable() ? 1 : 0);
+            return (CelesteArchipelagoSaveData.IsGoalLevelAccessible() ? 1 : 0);
         }
 
     }
