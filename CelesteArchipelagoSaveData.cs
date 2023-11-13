@@ -51,9 +51,27 @@ namespace Celeste.Mod.CelesteArchipelago
 
             if ((AreaMode)mode == AreaMode.Normal)
             {
-                return GetCompletionInGame((int)AreaMode.Normal, area - 1)
+                int victoryArea = -1;
+                switch(ArchipelagoConnection.Instance.victoryCondition)
+                {
+                    case VictoryCondition.CHAPTER_7_SUMMIT:
+                        victoryArea = 7;
+                        break;
+                    case VictoryCondition.CHAPTER_8_CORE:
+                        victoryArea = 9;
+                        break;
+                    case VictoryCondition.CHAPTER_9_FAREWELL:
+                        victoryArea = 10;
+                        break;
+                    default: break;
+                }
+
+                bool externalCheck = !(area == victoryArea && mode == 0) || IsGoalLevelAccessible();
+                return externalCheck && (
+                    GetCompletionInGame((int)AreaMode.Normal, area - 1)
                     || GetCompletionInGame((int)AreaMode.BSide, area - 1)
-                    || GetCompletionInGame((int)AreaMode.CSide, area - 1);
+                    || GetCompletionInGame((int)AreaMode.CSide, area - 1)
+                );
             }
             else if ((AreaMode) mode == AreaMode.BSide)
             {
@@ -67,7 +85,7 @@ namespace Celeste.Mod.CelesteArchipelago
             return false;
         }
 
-        public static bool IsHeartGemDoorOpenable()
+        public static bool IsGoalLevelAccessible()
         {
             var slotData = ArchipelagoConnection.Instance.slotData;
 
