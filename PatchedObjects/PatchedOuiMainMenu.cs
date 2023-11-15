@@ -25,13 +25,13 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 
         private static IEnumerator Enter(On.Celeste.OuiMainMenu.orig_Enter orig, OuiMainMenu self, Oui from)
         {
-            if(from is OuiChapterSelect)
+            if (from is OuiChapterSelect)
             {
-                if(ArchipelagoConnection.Instance != null)
+                if (ArchipelagoConnection.Instance != null)
                 {
                     ArchipelagoConnection.Instance.Disconnect();
                 }
-                if(CelesteArchipelagoModule.Instance.chatHandler != null)
+                if (CelesteArchipelagoModule.Instance.chatHandler != null)
                 {
                     Celeste.Instance.Components.Remove(CelesteArchipelagoModule.Instance.chatHandler);
                     CelesteArchipelagoModule.Instance.chatHandler.DeInit();

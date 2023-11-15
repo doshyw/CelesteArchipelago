@@ -4,10 +4,13 @@ using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Archipelago.MultiClient.Net.Packets;
 using Microsoft.Xna.Framework;
+using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
@@ -87,8 +90,14 @@ namespace Celeste.Mod.CelesteArchipelago
             if(session.Socket.Connected)
             {
                 Logger.Log("CelesteArchipelago", "Disconnecting socket.");
-                session.Socket.DisconnectAsync().Wait();
+
+                var rawSocket = DynamicData.For(session.Socket).Get<ClientWebSocket>("webSocket");
+                rawSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "Close requested by client", CancellationToken.None).Wait();
+                DynamicData.For(session.Socket).Invoke("OnSocketClosed");
             }
+            Logger.Log("CelesteArchipelago", $"Socket is now {session.Socket.Connected}");
+            session.MessageLog.OnMessageReceived -= OnMessageReceived;
+            session.Items.ItemReceived -= AddItemCallback;
             Instance = null;
         }
 
