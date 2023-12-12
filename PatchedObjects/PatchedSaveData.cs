@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago
+namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 {
-    public static class PatchedSaveData
+    public class PatchedSaveData : IPatchable
     {
-        internal static void Load()
+        public void Load()
         {
             On.Celeste.SaveData.RegisterCompletion += RegisterCompletion;
             On.Celeste.SaveData.CheckStrawberry_AreaKey_EntityID += CheckStrawberry;
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             On.Celeste.SaveData.RegisterCompletion -= RegisterCompletion;
             On.Celeste.SaveData.CheckStrawberry_AreaKey_EntityID -= CheckStrawberry;

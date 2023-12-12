@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago
+namespace Celeste.Mod.CelesteArchipelago.Networking
 {
     internal class ArchipelagoConnection
     {
@@ -55,39 +55,11 @@ namespace Celeste.Mod.CelesteArchipelago
             ));
         }
 
-        private void ConnectCallback(Action<LoginResult> onLogin, LoginResult result)
-        {
-            if (!result.Successful)
-            {
-                LoginFailure failure = (LoginFailure)result;
-                string errorMsg = $"Failed to connect to {session.Socket.Uri.Host}:{session.Socket.Uri.Port} as {CelesteArchipelagoModule.Settings.Name}";
-                Logger.Log("CelesteArchipelago", errorMsg);
-                CelesteArchipelagoModule.Instance.chatHandler.HandleMessage(errorMsg, Color.Red);
-                foreach (string error in failure.Errors)
-                {
-                    Logger.Log("CelesteArchipelago", $"    {error}");
-                    CelesteArchipelagoModule.Instance.chatHandler.HandleMessage(error, Color.DarkRed);
-                }
-                foreach (ConnectionRefusedError error in failure.ErrorCodes)
-                {
-                    Logger.Log("CelesteArchipelago", $"    {error}");
-                    CelesteArchipelagoModule.Instance.chatHandler.HandleMessage(error.ToString(), Color.DarkRed);
-                }
-
-                Disconnect();
-                login = null;
-            }
-            else
-            {
-                login = (LoginSuccessful)result;
-            }
-
-            onLogin(result);
-        }
+        
 
         public void Disconnect()
         {
-            if(session.Socket.Connected)
+            if (session.Socket.Connected)
             {
                 Logger.Log("CelesteArchipelago", "Disconnecting socket.");
 
@@ -111,7 +83,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
         private void AddItemCallback(ReceivedItemsHelper receivedItemsHelper)
         {
-            while(receivedItemsHelper.Any())
+            while (receivedItemsHelper.Any())
             {
                 Logger.Log("CelesteArchipelago", $"Received item {receivedItemsHelper.PeekItemName()} with ID {receivedItemsHelper.PeekItem().Item}");
 
@@ -149,10 +121,10 @@ namespace Celeste.Mod.CelesteArchipelago
             Logger.Log("CelesteArchipelago", $"VictoryCondition: {victoryCondition}");
             Logger.Log("CelesteArchipelago", $"Type: {location.type}");
 
-            bool isVictory = location.type == ItemType.COMPLETION && ( 
-                (location.area == 10 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_9_FAREWELL)
-                || (location.area == 9 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_8_CORE)
-                || (location.area == 7 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_7_SUMMIT)
+            bool isVictory = location.type == ItemType.COMPLETION && (
+                location.area == 10 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_9_FAREWELL
+                || location.area == 9 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_8_CORE
+                || location.area == 7 && location.mode == 0 && victoryCondition == VictoryCondition.CHAPTER_7_SUMMIT
             );
 
             if (isVictory)

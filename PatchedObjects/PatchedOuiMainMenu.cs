@@ -7,18 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 using MonoMod.Utils;
 using System.Collections.Generic;
+using Celeste.Mod.CelesteArchipelago.Networking;
 
 namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 {
-    public static class PatchedOuiMainMenu
+    public class PatchedOuiMainMenu : IPatchable
     {
 
-        internal static void Load()
+        public void Load()
         {
             On.Celeste.OuiMainMenu.Enter += Enter;
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             On.Celeste.OuiMainMenu.Enter -= Enter;
         }
@@ -31,6 +32,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 {
                     ArchipelagoConnection.Instance.Disconnect();
                 }
+                ArchipelagoController.Instance.ChatHandler
                 if (CelesteArchipelagoModule.Instance.chatHandler != null)
                 {
                     Celeste.Instance.Components.Remove(CelesteArchipelagoModule.Instance.chatHandler);

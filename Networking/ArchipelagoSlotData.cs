@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago
+namespace Celeste.Mod.CelesteArchipelago.Networking
 {
-    internal class ArchipelagoSlotData
+    public class ArchipelagoSlotData
     {
         public long BerriesRequired { get; set; } = 0;
         public long CassettesRequired { get; set; } = 0;
@@ -26,7 +26,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public ArchipelagoSlotData(Dictionary<string, object> slotData)
         {
-            foreach(var keyValuePair in slotData)
+            foreach (var keyValuePair in slotData)
             {
                 SetSlotDataFromPython(keyValuePair.Key, keyValuePair.Value);
             }
@@ -41,7 +41,7 @@ namespace Celeste.Mod.CelesteArchipelago
             }
             var property = keyPropertyMap[key];
 
-            if(property.PropertyType != data.GetType())
+            if (property.PropertyType != data.GetType())
             {
                 Logger.Log("CelesteArchipelago", $"Slot data type of {property.PropertyType} for key {key} does not match communicated object type of {data.GetType()}");
                 return;
@@ -49,10 +49,9 @@ namespace Celeste.Mod.CelesteArchipelago
             property.SetValue(this, data);
             Logger.Log("CelesteArchipelago", $"Slot data for key {key} set to {property.GetValue(this)}");
         }
-
     }
 
-    internal enum VictoryCondition
+    internal enum VictoryConditionOptions
     {
         CHAPTER_7_SUMMIT = 0,
         CHAPTER_8_CORE = 1,

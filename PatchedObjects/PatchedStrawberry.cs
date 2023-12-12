@@ -10,13 +10,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago
+namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 {
-    public static class PatchedStrawberry
+    public class PatchedStrawberry : IPatchable
     {
         private static IDetour hook_Strawberry_orig_OnCollect;
         private delegate void orig_Strawberry_orig_OnCollect(Strawberry self);
-        internal static void Load()
+        public void Load()
         {
             hook_Strawberry_orig_OnCollect = new Hook(
                 typeof(Strawberry).GetMethod("orig_OnCollect"),
@@ -25,16 +25,16 @@ namespace Celeste.Mod.CelesteArchipelago
             On.Celeste.Strawberry.ctor += ctor;
         }
 
+        public void Unload()
+        {
+            hook_Strawberry_orig_OnCollect.Dispose();
+            On.Celeste.Strawberry.ctor -= ctor;
+        }
+
         private static void ctor(On.Celeste.Strawberry.orig_ctor orig, Strawberry self, EntityData data, Microsoft.Xna.Framework.Vector2 offset, EntityID gid)
         {
             orig(self, data, offset, gid);
             DynamicData.For(self).Set("isGhostBerry", CelesteArchipelagoSaveData.GetStrawberryOutGame(SaveData.Instance.CurrentSession_Safe.Area.ID, self.ID));
-        }
-
-        internal static void Unload()
-        {
-            hook_Strawberry_orig_OnCollect.Dispose();
-            On.Celeste.Strawberry.ctor -= ctor;
         }
 
         private static void orig_OnCollect(orig_Strawberry_orig_OnCollect orig, Strawberry self)

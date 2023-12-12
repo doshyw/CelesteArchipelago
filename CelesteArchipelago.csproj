@@ -37,6 +37,10 @@
       <None Remove="decompiled\**" />
       <None Remove="src\**" />
     </ItemGroup>
+    <ItemGroup>
+      <None Remove="Archipelago.MultiClient.Net.dll" />
+      <None Remove="CelesteArchipelago.dll" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Archipelago.MultiClient.Net" Version="5.0.6" />

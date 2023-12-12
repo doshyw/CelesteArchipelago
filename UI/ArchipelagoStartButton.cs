@@ -1,4 +1,5 @@
 ﻿using Archipelago.MultiClient.Net;
+using Celeste.Mod.CelesteArchipelago.Networking;
 using Celeste.Mod.CelesteArchipelago.PatchedObjects;
 using Monocle;
 using Newtonsoft.Json.Linq;

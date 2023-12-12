@@ -1,4 +1,5 @@
-﻿using Monocle;
+﻿using Celeste.Mod.CelesteArchipelago.Networking;
+using Monocle;
 using System;
 using System.Collections.Generic;
 using System.IO;

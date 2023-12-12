@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Celeste.Mod.CelesteArchipelago.Networking;
+using Microsoft.Xna.Framework;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using Newtonsoft.Json;
@@ -11,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 {
-    public static class PatchedHeartGemDoor
+    public class PatchedHeartGemDoor : IPatchable
     {
 
         private static IDetour hook_HeartGemDoor_get_HeartGems;
 
-        internal static void Load()
+        public void Load()
         {
             On.Celeste.HeartGemDoor.ctor += ctor;
             hook_HeartGemDoor_get_HeartGems = new Hook(
@@ -25,7 +26,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
             );
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             On.Celeste.HeartGemDoor.ctor -= ctor;
             hook_HeartGemDoor_get_HeartGems.Dispose();
@@ -48,7 +49,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 return orig(self);
             }
 
-            return (CelesteArchipelagoSaveData.IsGoalLevelAccessible() ? 1 : 0);
+            return (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(10, AreaMode.Normal)) ? 1 : 0);
         }
 
     }

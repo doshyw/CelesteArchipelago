@@ -1,4 +1,5 @@
-﻿using FMOD;
+﻿using Celeste.Mod.CelesteArchipelago.Networking;
+using FMOD;
 using Microsoft.Xna.Framework;
 using Monocle;
 using MonoMod.Utils;
@@ -10,17 +11,17 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago
+namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 {
-    public static class PatchedCassette
+    public class PatchedCassette : IPatchable
     {
-        internal static void Load()
+        public void Load()
         {
             On.Celeste.Cassette.Added += Added;
             On.Celeste.Cassette.CollectRoutine += CollectRoutine;
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             On.Celeste.Cassette.Added -= Added;
             On.Celeste.Cassette.CollectRoutine -= CollectRoutine;
@@ -37,7 +38,7 @@ namespace Celeste.Mod.CelesteArchipelago
             entityAdded(scene);
 
             // self.IsGhost = SaveData.Instance.Areas_Safe[self.SceneAs<Level>().Session.Area.ID].Cassette;
-            self.IsGhost = CelesteArchipelagoSaveData.GetCassetteOutGame(self.SceneAs<Level>().Session.Area.ID);
+            self.IsGhost = ArchipelagoController.Instance.ProgressionSystem.IsCollectedLogically(self.SceneAs<Level>().Session.Area, CollectableType.CASSETTE);
 
             cassette.Set("sprite", GFX.SpriteBank.Create(self.IsGhost ? "cassetteGhost" : "cassette"));
             var sprite = cassette.Get<Sprite>("sprite");
@@ -94,7 +95,7 @@ namespace Celeste.Mod.CelesteArchipelago
             level.Session.RespawnPoint = level.GetSpawnPoint(nodes[1]);
             level.Session.UpdateLevelStartDashes();
             // SaveData.Instance.RegisterCassette(level.Session.Area);
-            CelesteArchipelagoSaveData.SetCassetteOutGame(level.Session.Area.ID); // NEW
+            ArchipelagoController.Instance.ProgressionSystem.OnCollectedClient(level.Session.Area, CollectableType.CASSETTE); // NEW
             cbm?.StopBlocks();
             self.Depth = -1000000;
             level.Shake();

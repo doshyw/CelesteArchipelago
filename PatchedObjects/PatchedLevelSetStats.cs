@@ -6,13 +6,13 @@ using System;
 using System.Collections;
 using System.Reflection;
 
-namespace Celeste.Mod.CelesteArchipelago
+namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 {
-    public static class PatchedLevelSetStats
+    public class PatchedLevelSetStats : IPatchable
     {
         private static IDetour hook_LevelSetStats_get_UnlockedModes;
 
-        internal static void Load()
+        public void Load()
         {
             hook_LevelSetStats_get_UnlockedModes = new Hook(
                 typeof(LevelSetStats).GetProperty("UnlockedModes").GetGetMethod(),
@@ -20,7 +20,7 @@ namespace Celeste.Mod.CelesteArchipelago
             );
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             hook_LevelSetStats_get_UnlockedModes.Dispose();
         }

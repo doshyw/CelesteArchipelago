@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago
+namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 {
-    public class UnlockedBSide : Entity
+    public class ReplacementUnlockedBSide : Entity
     {
         private float alpha;
 

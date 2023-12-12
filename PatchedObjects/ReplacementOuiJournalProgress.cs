@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 {
-    internal class PatchedOuiJournalProgress : OuiJournalPage
+    internal class ReplacementOuiJournalProgress : OuiJournalPage
     {
         private Table table;
 
-        public PatchedOuiJournalProgress(OuiJournal journal)
+        public ReplacementOuiJournalProgress(OuiJournal journal)
             : base(journal)
         {
             PageTexture = "page";
