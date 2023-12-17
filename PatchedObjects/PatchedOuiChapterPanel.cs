@@ -80,7 +80,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     wiggler.Start();
                     if (selectingMode)
                     {
-                        oui.Invoke("UpdateStats", true, null, null, null);
+                        oui.Invoke("UpdateStats", true, false, false, false);
                         oui.Invoke("PlayExpandSfx", oui.Get<float>("height"), (float)oui.Invoke<int>("GetModeHeight"));
                     }
                     else
@@ -95,7 +95,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     wiggler.Start();
                     if (selectingMode)
                     {
-                        oui.Invoke("UpdateStats", true, null, null, null);
+                        oui.Invoke("UpdateStats", true, false, false, false);
                         oui.Invoke("PlayExpandSfx", oui.Get<float>("height"), (float)oui.Invoke<int>("GetModeHeight"));
                     }
                     else
