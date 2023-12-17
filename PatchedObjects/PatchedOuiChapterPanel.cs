@@ -303,7 +303,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 options.Invoke("Add", newOption);
             }
             panel.Set("selectingMode", true);
-            panel.Invoke("UpdateStats", false, null, null, null);
+            panel.Invoke("UpdateStats", false, false, false, false);
             panel.Invoke("SetStatsPosition", false);
 
             options = DynamicData.For(panel.Get("options"));
