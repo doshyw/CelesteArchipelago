@@ -9,12 +9,19 @@ using System.Threading;
 using Archipelago.MultiClient.Net.Enums;
 using System.Collections.Generic;
 
-namespace Celeste.Mod.CelesteArchipelago.Networking
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class Connection : GameComponent
     {
         public ArchipelagoSession Session { get; private set; }
         public ArchipelagoSlotData SlotData { get; private set; }
+        public bool IsConnected
+        {
+            get
+            {
+                return Session.Socket.Connected;
+            }
+        }
 
         private Action<LoginResult> callback;
         private ConnectionParameters parameters;
@@ -28,7 +35,9 @@ namespace Celeste.Mod.CelesteArchipelago.Networking
             connectionState = ConnectionState.UNCONNECTED;
             this.parameters = parameters;
             this.callback = callback;
+            game.Components.Add(this);
             Session = ArchipelagoSessionFactory.CreateSession($"{parameters.server}:{parameters.port}");
+            Session.MessageLog.OnMessageReceived += ArchipelagoController.Instance.HandleMessage;
         }
 
         public override void Update(GameTime gameTime)
@@ -57,6 +66,7 @@ namespace Celeste.Mod.CelesteArchipelago.Networking
 
         private void BeginConnect()
         {
+            ArchipelagoController.Instance.HandleMessage("Attempting to open connection to Archipelago server.", Color.White);
             Logger.Log("CelesteArchipelago", "Attempting to open connection to Archipelago server.");
             connectionState = ConnectionState.CONNECTING;
             connectTask = Session.ConnectAsync();
@@ -74,7 +84,7 @@ namespace Celeste.Mod.CelesteArchipelago.Networking
                     return;
                 }
                 Logger.Log("CelesteArchipelago", "Connection to Archipelago server successful.");
-                connectionState = ConnectionState.CONNECTING;
+                connectionState = ConnectionState.CONNECTED;
             }
         }
 
@@ -113,16 +123,16 @@ namespace Celeste.Mod.CelesteArchipelago.Networking
                 LoginFailure failure = (LoginFailure)result;
                 string errorMsg = $"Failed to connect to {Session.Socket.Uri.Host}:{Session.Socket.Uri.Port} as {CelesteArchipelagoModule.Settings.Name}";
                 Logger.Log("CelesteArchipelago", errorMsg);
-                CelesteArchipelagoModule.Instance.chatHandler.HandleMessage(errorMsg, Color.Red);
+                ArchipelagoController.Instance.HandleMessage(errorMsg, Color.Red);
                 foreach (string error in failure.Errors)
                 {
                     Logger.Log("CelesteArchipelago", $"    {error}");
-                    CelesteArchipelagoModule.Instance.chatHandler.HandleMessage(error, Color.DarkRed);
+                    ArchipelagoController.Instance.HandleMessage(error, Color.DarkRed);
                 }
                 foreach (ConnectionRefusedError error in failure.ErrorCodes)
                 {
                     Logger.Log("CelesteArchipelago", $"    {error}");
-                    CelesteArchipelagoModule.Instance.chatHandler.HandleMessage(error.ToString(), Color.DarkRed);
+                    ArchipelagoController.Instance.HandleMessage(error.ToString(), Color.DarkRed);
                 }
             }
 
@@ -139,6 +149,7 @@ namespace Celeste.Mod.CelesteArchipelago.Networking
 
         protected override void Dispose(bool disposing)
         {
+            Enabled = false;
             connectionState = ConnectionState.UNCONNECTED;
             if (connectTask != null && !connectTask.IsCompleted) connectTask.Wait();
             if (loginTask != null && !loginTask.IsCompleted) loginTask.Wait();

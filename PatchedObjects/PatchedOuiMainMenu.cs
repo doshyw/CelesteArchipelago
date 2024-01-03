@@ -1,15 +1,7 @@
-﻿using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework;
-using System;
+﻿using Microsoft.Xna.Framework;
 using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MonoMod.Utils;
-using System.Collections.Generic;
-using Celeste.Mod.CelesteArchipelago.Networking;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class PatchedOuiMainMenu : IPatchable
     {
@@ -26,17 +18,16 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 
         private static IEnumerator Enter(On.Celeste.OuiMainMenu.orig_Enter orig, OuiMainMenu self, Oui from)
         {
+            if(!ArchipelagoController.Instance.Enabled)
+            {
+                ArchipelagoController.Instance.Init();
+            }
+
             if (from is OuiChapterSelect)
             {
-                if (ArchipelagoConnection.Instance != null)
+                if (ArchipelagoController.Instance.IsConnected)
                 {
-                    ArchipelagoConnection.Instance.Disconnect();
-                }
-                ArchipelagoController.Instance.ChatHandler
-                if (CelesteArchipelagoModule.Instance.chatHandler != null)
-                {
-                    Celeste.Instance.Components.Remove(CelesteArchipelagoModule.Instance.chatHandler);
-                    CelesteArchipelagoModule.Instance.chatHandler.DeInit();
+                    ArchipelagoController.Instance.DisconnectSession();
                 }
             }
 

@@ -1,11 +1,8 @@
-﻿using Celeste.Mod.CelesteArchipelago.Networking;
-using Monocle;
+﻿using Monocle;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -90,7 +87,7 @@ namespace Celeste.Mod.CelesteArchipelago
                             levelString = $"Level {area} {"ABC"[mode]}-Side";
                             mapData = AreaData.Areas[area].Mode[mode].MapData;
                             path = AreaData.Areas[area].SID;
-                            item = new ArchipelagoNetworkItem(ItemType.COMPLETION, area, mode);
+                            item = new ArchipelagoNetworkItem(CollectableType.COMPLETION, area, mode);
                             entityString = "Completion";
                             foreach (var level in mapData.Levels)
                             {
@@ -99,27 +96,27 @@ namespace Celeste.Mod.CelesteArchipelago
                                     switch(entity.Name)
                                     {
                                         case "blackGem":
-                                            item = new ArchipelagoNetworkItem(ItemType.GEMHEART, area, mode);
+                                            item = new ArchipelagoNetworkItem(CollectableType.HEARTGEM, area, mode);
                                             entityString = "Crystal Heart";
                                             break;
                                         case "cassette":
-                                            item = new ArchipelagoNetworkItem(ItemType.CASSETTE, area, mode);
+                                            item = new ArchipelagoNetworkItem(CollectableType.CASSETTE, area, mode);
                                             entityString = "Cassette";
                                             break;
                                         case "heartGemDoor":
-                                            item = new ArchipelagoNetworkItem(ItemType.GEMHEART, area, mode);
+                                            item = new ArchipelagoNetworkItem(CollectableType.HEARTGEM, area, mode);
                                             item.offset = 1;
                                             entityString = "Crystal Heart Door";
                                             break;
                                         case "strawberry":
-                                            item = new ArchipelagoNetworkItem(ItemType.STRAWBERRY, area, mode, new EntityID(entity.Level.Name, entity.ID));
+                                            item = new ArchipelagoNetworkItem(CollectableType.STRAWBERRY, area, mode, new EntityID(entity.Level.Name, entity.ID));
                                             entityString = $"Strawberry {item.offset + 1}";
                                             break;
                                         default: continue;
                                     }
                                     lines.Add($"[{item.ID}] {levelString} {entityString} : loadscreen {path} {level.Name} {mode}");
                                 }
-                                item = new ArchipelagoNetworkItem(ItemType.COMPLETION, area, mode);
+                                item = new ArchipelagoNetworkItem(CollectableType.COMPLETION, area, mode);
                                 entityString = $"Completion : loadscreen {path} {level.Name} {mode}";
                             }
                             lines.Add($"[{item.ID}] {levelString} {entityString}");

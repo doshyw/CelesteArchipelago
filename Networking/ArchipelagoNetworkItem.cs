@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.Networking
+namespace Celeste.Mod.CelesteArchipelago
 {
     
 
-    internal class ArchipelagoNetworkItem
+    public class ArchipelagoNetworkItem
     {
         public const int OFFSET_BASE = 8000000;
         public const int OFFSET_KIND = 20000;
@@ -29,6 +29,14 @@ namespace Celeste.Mod.CelesteArchipelago.Networking
             get
             {
                 return OFFSET_BASE + (int)type * OFFSET_KIND + area * OFFSET_LEVEL + mode * OFFSET_SIDE + offset;
+            }
+        }
+
+        public AreaKey areaKey
+        {
+            get
+            {
+                return new AreaKey(area, (AreaMode)mode);
             }
         }
 

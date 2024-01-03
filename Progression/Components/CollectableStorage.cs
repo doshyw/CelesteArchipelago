@@ -6,7 +6,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.Progression.Components
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class CollectableStorage<T>
     {

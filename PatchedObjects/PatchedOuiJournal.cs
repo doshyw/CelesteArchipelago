@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class PatchedOuiJournal : IPatchable
     {

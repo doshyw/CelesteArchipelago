@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.Progression.Components
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class NumberStorage
     {

@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Threading.Tasks;
-using Celeste.Mod.CelesteArchipelago.Networking;
-using Celeste.Mod.CelesteArchipelago.Progression.Components;
-using Celeste.Mod.CelesteArchipelago.Progression.Interfaces;
 
-namespace Celeste.Mod.CelesteArchipelago.Progression
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class DefaultProgression : IProgressionSystem
     {
@@ -72,7 +65,7 @@ namespace Celeste.Mod.CelesteArchipelago.Progression
                 case CollectableType.HEARTGEM:
                     return SaveData.Instance.Areas_Safe[area.ID].Modes[(int)area.Mode].HeartGem;
                 case CollectableType.STRAWBERRY:
-                    return entity != null && SaveData.Instance.CheckStrawberry(area, entity.Value);
+                    return entity != null && SaveData.Instance.Areas_Safe[area.ID].Modes[(int)area.Mode].Strawberries.Contains(entity.Value);
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
             }
@@ -95,35 +88,12 @@ namespace Celeste.Mod.CelesteArchipelago.Progression
             }
         }
 
-        public void OnCollectedClient(AreaKey area, CollectableType collectable, EntityID? entity = null)
+        public void OnCollectedClient(AreaKey area, CollectableType collectable, EntityID? entity = null, bool isReplay = false)
         {
             switch (collectable)
             {
                 case CollectableType.CASSETTE:
                     CassettesVisual.Flag(area);
-                    break;
-                case CollectableType.COMPLETION:
-                    Completions.Flag(area);
-                    break;
-                case CollectableType.HEARTGEM:
-                    HeartGems.Flag(area);
-                    break;
-                case CollectableType.STRAWBERRY:
-                    if (entity == null) return;
-                    Strawberries.Put(area, entity.Value);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
-            }
-            ArchipelagoConnection.Instance.CheckLocation(new ArchipelagoNetworkItem(collectable, area, entity));
-        }
-
-        public void OnCollectedServer(AreaKey area, CollectableType collectable, EntityID? entity = null)
-        {
-            switch (collectable)
-            {
-                case CollectableType.CASSETTE:
-                    CassettesLogical.Flag(area);
                     break;
                 case CollectableType.COMPLETION:
                     SaveData.Instance.Areas_Safe[area.ID].Modes[(int)area.Mode].Completed = true;
@@ -138,20 +108,46 @@ namespace Celeste.Mod.CelesteArchipelago.Progression
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
             }
+            if(!isReplay)
+            {
+                ArchipelagoController.Instance.SendLocationCallback(new ArchipelagoNetworkItem(collectable, area, entity));
+            }
+        }
+
+        public void OnCollectedServer(AreaKey area, CollectableType collectable, EntityID? entity = null)
+        {
+            switch (collectable)
+            {
+                case CollectableType.CASSETTE:
+                    CassettesLogical.Flag(area);
+                    break;
+                case CollectableType.COMPLETION:
+                    Completions.Flag(area);
+                    break;
+                case CollectableType.HEARTGEM:
+                    HeartGems.Flag(area);
+                    break;
+                case CollectableType.STRAWBERRY:
+                    if (entity == null) return;
+                    Strawberries.Put(area, entity.Value);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
+            }
         }
 
         public int GetTotalVisually(CollectableType collectable)
         {
-            //return Enumerable.Range(1, SaveData.Instance.MaxArea)
-            //   .Select(area => SaveData.Instance.Areas_Safe[area].Modes)
-            //   .SelectMany(modeArr => modeArr.Select(mode => mode.Completed))
-            //   .Count(val => val);
+            
             switch (collectable)
             {
                 case CollectableType.CASSETTE:
                     return CassettesVisual.GetTotal();
                 case CollectableType.COMPLETION:
-                    return SaveData.Instance.TotalCompletions;
+                    return Enumerable.Range(1, SaveData.Instance.MaxArea)
+                       .Select(area => SaveData.Instance.Areas_Safe[area].Modes)
+                       .SelectMany(modeArr => modeArr.Select(mode => mode.Completed))
+                       .Count(val => val);
                 case CollectableType.HEARTGEM:
                     return SaveData.Instance.TotalHeartGems;
                 case CollectableType.STRAWBERRY:

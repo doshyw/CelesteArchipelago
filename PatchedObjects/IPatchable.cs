@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
     internal interface IPatchable
     {

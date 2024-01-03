@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class PatchedLevelSetStats : IPatchable
     {

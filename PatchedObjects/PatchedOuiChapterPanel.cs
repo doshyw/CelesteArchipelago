@@ -1,19 +1,11 @@
-﻿using Celeste.Mod.CelesteArchipelago.Networking;
-using Microsoft.Xna.Framework;
-using Mono.Cecil;
+﻿using Microsoft.Xna.Framework;
 using Monocle;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class PatchedOuiChapterPanel : IPatchable
     {
@@ -81,7 +73,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     wiggler.Start();
                     if (selectingMode)
                     {
-                        oui.Invoke("UpdateStats", true, null, null, null);
+                        oui.Invoke("UpdateStats", true, false, false, false);
                         oui.Invoke("PlayExpandSfx", oui.Get<float>("height"), (float)oui.Invoke<int>("GetModeHeight"));
                     }
                     else
@@ -96,7 +88,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     wiggler.Start();
                     if (selectingMode)
                     {
-                        oui.Invoke("UpdateStats", true, null, null, null);
+                        oui.Invoke("UpdateStats", true, false, false, false);
                         oui.Invoke("PlayExpandSfx", oui.Get<float>("height"), (float)oui.Invoke<int>("GetModeHeight"));
                     }
                     else
@@ -304,7 +296,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 options.Invoke("Add", newOption);
             }
             panel.Set("selectingMode", true);
-            panel.Invoke("UpdateStats", false, null, null, null);
+            panel.Invoke("UpdateStats", false, false, false, false);
             panel.Invoke("SetStatsPosition", false);
 
             options = DynamicData.For(panel.Get("options"));

@@ -1,10 +1,7 @@
-﻿using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 using System;
-using System.Collections.Generic;
-using Celeste.Mod.CelesteArchipelago.Chat;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 
 namespace Celeste.Mod.CelesteArchipelago

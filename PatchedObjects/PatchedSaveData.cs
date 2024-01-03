@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+﻿namespace Celeste.Mod.CelesteArchipelago
 {
     public class PatchedSaveData : IPatchable
     {
@@ -12,6 +6,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
         {
             On.Celeste.SaveData.RegisterCompletion += RegisterCompletion;
             On.Celeste.SaveData.CheckStrawberry_AreaKey_EntityID += CheckStrawberry;
+            On.Celeste.SaveData.SetCheckpoint += SetCheckpoint;
         }
 
         public void Unload()
@@ -64,15 +59,22 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
             if (area.ID == 0)
             {
                 areaModeStats.Completed = true;
-                CelesteArchipelagoSaveData.SetCompletionInGame(0, 0);
+                ArchipelagoController.Instance.ProgressionSystem.OnCollectedServer(area, CollectableType.COMPLETION);
             }
-            CelesteArchipelagoSaveData.SetCompletionOutGame((int)area.Mode, area.ID); // NEW
+            ArchipelagoController.Instance.ProgressionSystem.OnCollectedClient(area, CollectableType.COMPLETION); // NEW
             session.InArea = false;
         }
 
         private static bool CheckStrawberry(On.Celeste.SaveData.orig_CheckStrawberry_AreaKey_EntityID orig, SaveData self, AreaKey area, EntityID strawberry)
         {
-            return CelesteArchipelagoSaveData.GetStrawberryOutGame(area.ID, strawberry);
+            return ArchipelagoController.Instance.ProgressionSystem.IsCollectedVisually(area, CollectableType.STRAWBERRY, strawberry);
+        }
+
+        private static bool SetCheckpoint(On.Celeste.SaveData.orig_SetCheckpoint orig, SaveData self, AreaKey area, string level)
+        {
+            Logger.Log("CelesteArchipelago", $"Set checkpoint at level {level}");
+            ArchipelagoController.Instance.CheckpointState.MarkCheckpoint(area, level);
+            return orig(self, area, level);
         }
 
     }

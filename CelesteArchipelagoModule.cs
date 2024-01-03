@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections;
-using Microsoft.Xna.Framework;
-using Archipelago.MultiClient.Net;
-using Monocle;
-using Celeste.Mod.CelesteArchipelago.PatchedObjects;
-using MonoMod.RuntimeDetour;
 
 namespace Celeste.Mod.CelesteArchipelago {
     public class CelesteArchipelagoModule : EverestModule {
@@ -32,39 +26,15 @@ namespace Celeste.Mod.CelesteArchipelago {
         }
 
         public override void Load() {
-            // TODO: apply any hooks that should always be active
-            PatchedCassette.Load();
-            PatchedHeartGem.Load();
-            PatchedHeartGemDoor.Load();
-            PatchedLevelSetStats.Load();
-            PatchedOuiChapterPanel.Load();
-            PatchedOuiChapterSelect.Load();
-            PatchedOuiMainMenu.Load();
-            PatchedOuiJournal.Load();
-            PatchedSaveData.Load();
-            PatchedStrawberry.Load();
+            new ArchipelagoController(Celeste.Instance);
+            ArchipelagoController.Instance.LoadPatches();
 
             Everest.Events.MainMenu.OnCreateButtons += ArchipelagoUI.ReplaceClimbButton;
         }
 
-        public override void Initialize()
-        {
-            
-            // Logger.Log("CelesteArchipelago", AreaData.Areas.ToString());
-        }
-
         public override void Unload() {
-            // TODO: unapply any hooks applied in Load()
-            PatchedCassette.Unload();
-            PatchedHeartGem.Unload();
-            PatchedHeartGemDoor.Unload();
-            PatchedLevelSetStats.Unload();
-            PatchedOuiChapterPanel.Unload();
-            PatchedOuiChapterSelect.Unload();
-            PatchedOuiMainMenu.Unload();
-            PatchedOuiJournal.Unload();
-            PatchedSaveData.Unload();
-            PatchedStrawberry.Unload();
+            ArchipelagoController.Instance.UnloadPatches();
+            ArchipelagoController.Instance.Dispose();
 
             Everest.Events.MainMenu.OnCreateButtons -= ArchipelagoUI.ReplaceClimbButton;
         }

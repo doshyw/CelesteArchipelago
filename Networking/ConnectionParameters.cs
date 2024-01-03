@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.Networking
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class ConnectionParameters
     {
@@ -24,6 +24,8 @@ namespace Celeste.Mod.CelesteArchipelago.Networking
         public ConnectionParameters(string game, string server, string port, string name, ItemsHandlingFlags flags, Version version = null, string[] tags = null, string uuid = null, string password = null, bool slotData = true)
         {
             this.game = game;
+            this.server = server;
+            this.port = port;
             this.name = name;
             this.flags = flags;
             this.version = version;

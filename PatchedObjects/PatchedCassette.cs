@@ -1,17 +1,10 @@
-﻿using Celeste.Mod.CelesteArchipelago.Networking;
-using FMOD;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Monocle;
 using MonoMod.Utils;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class PatchedCassette : IPatchable
     {
@@ -38,7 +31,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
             entityAdded(scene);
 
             // self.IsGhost = SaveData.Instance.Areas_Safe[self.SceneAs<Level>().Session.Area.ID].Cassette;
-            self.IsGhost = ArchipelagoController.Instance.ProgressionSystem.IsCollectedLogically(self.SceneAs<Level>().Session.Area, CollectableType.CASSETTE);
+            self.IsGhost = ArchipelagoController.Instance.ProgressionSystem.IsCollectedVisually(self.SceneAs<Level>().Session.Area, CollectableType.CASSETTE);
 
             cassette.Set("sprite", GFX.SpriteBank.Create(self.IsGhost ? "cassetteGhost" : "cassette"));
             var sprite = cassette.Get<Sprite>("sprite");

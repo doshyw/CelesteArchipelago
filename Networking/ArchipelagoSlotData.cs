@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.Networking
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class ArchipelagoSlotData
     {

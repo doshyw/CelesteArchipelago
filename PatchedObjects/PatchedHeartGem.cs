@@ -1,17 +1,9 @@
-﻿using Celeste.Mod.CelesteArchipelago.Networking;
-using Celeste.Mod.CelesteArchipelago.PatchedObjects;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Monocle;
-using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class PatchedHeartGem : IPatchable
     {
