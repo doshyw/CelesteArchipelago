@@ -8,16 +8,16 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
-    public static class PatchedOuiJournal
+    public class PatchedOuiJournal : IPatchable
     {
-        internal static void Load()
+        public void Load()
         {
             On.Celeste.OuiJournal.Enter += EnterPatch;
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             On.Celeste.OuiJournal.Enter -= EnterPatch;
         }
@@ -29,7 +29,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
             var page = self.Pages.Find((page) => page is OuiJournalProgress);
             var index = self.Pages.IndexOf(page);
             self.Pages.RemoveAt(index);
-            self.Pages.Insert(index, new PatchedOuiJournalProgress(self));
+            self.Pages.Insert(index, new ReplacementOuiJournalProgress(self));
         }
 
     }

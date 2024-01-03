@@ -1,14 +1,6 @@
 ﻿using Archipelago.MultiClient.Net;
-using Celeste.Mod.CelesteArchipelago.PatchedObjects;
 using Monocle;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -34,53 +26,22 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 if (UserIO.Exists(GetModSaveFilePath(saveID)))
                 {
-                    Logger.Log("CelesteArchipelago", "Mod file exists.");
-                    SaveData.LoadModSaveData(saveID);
-                    var modData = CelesteArchipelagoModule.SaveData;
-                    if (modData.UUID == CelesteArchipelagoModule.Settings.UUID && UserIO.Exists(SaveData.GetFilename(saveID)))
-                    {
-                        Logger.Log("CelesteArchipelago", "Using existing save file.");
-                        saveData = UserIO.Load<SaveData>(SaveData.GetFilename(saveID), backup: false);
-                        if (saveData != null)
-                        {
-                            saveData.AfterInitialize();
-                        }
-                    }
-                    else
-                    {
-                        Logger.Log("CelesteArchipelago", "Deleting old save file.");
-                        if (!SaveData.TryDelete(saveID))
-                        {
-                            SaveData.TryDeleteModSaveData(saveID);
-                        }
-                    }
+                    Logger.Log("CelesteArchipelago", "Deleting existing Archipelago save.");
+                    SaveData.TryDelete(saveID);
                 }
                 UserIO.Close();
             }
 
-            if (saveData == null)
+            Logger.Log("CelesteArchipelago", "Creating new save file.");
+            saveData = new SaveData
             {
-                Logger.Log("CelesteArchipelago", "Creating new save file.");
-                SaveData.TryDeleteModSaveData(saveID);
-                saveData = new SaveData
-                {
-                    Name = CelesteArchipelagoModule.Settings.Name,
-                    AssistMode = false,
-                    VariantMode = false,
-                };
-            }
-
-            if(saveData == null)
-            {
-                return;
-            }
-
-            CelesteArchipelagoModule.Instance.chatHandler = new ChatHandler(Celeste.Instance);
-            Celeste.Instance.Components.Add(CelesteArchipelagoModule.Instance.chatHandler);
-            CelesteArchipelagoModule.Instance.chatHandler.Init();
-
+                Name = CelesteArchipelagoModule.Settings.Name,
+                AssistMode = false,
+                VariantMode = false,
+            };
+            
             ((OuiArchipelago)entryOui).SetFocusedMenu(false);
-            new ArchipelagoConnection((result) => OnConnectionAttempt(result, entryOui, saveData));
+            ArchipelagoController.Instance.StartSession((result) => OnConnectionAttempt(result, entryOui, saveData));
         }
 
         private void OnConnectionAttempt(LoginResult result, Oui entryOui, SaveData saveData)
@@ -91,50 +52,78 @@ namespace Celeste.Mod.CelesteArchipelago
                 return;
             }
 
+            // Create new savefile.
             Audio.Play("event:/ui/main/savefile_begin");
             SaveData.Start(saveData, saveID);
-            CelesteArchipelagoModule.SaveData.UUID = CelesteArchipelagoModule.Settings.UUID;
             PatchedOuiChapterSelect.HasChanges = true;
             SaveData.Instance.AssistModeChecks();
-            ArchipelagoConnection.Instance.Init();
 
-            if (SaveData.Instance.CurrentSession_Safe != null && SaveData.Instance.CurrentSession_Safe.InArea)
+            // Retrieve previous play state from server.
+            var state = ArchipelagoController.Instance.PlayState;
+
+            // Set base unlock data.
+            SaveData.Instance.UnlockedAreas_Safe = SaveData.Instance.MaxArea;
+            for (int i = 1; i < SaveData.Instance.MaxArea; i++)
             {
-                Logger.Log("CelesteArchipelago", "Entering existing level.");
-                Audio.SetMusic(null);
-                Audio.SetAmbience(null);
-                entryOui.Overworld.ShowInputUI = false;
-                new FadeWipe(entryOui.Scene, wipeIn: false, delegate
+                if (AreaData.Areas[i].HasMode(AreaMode.BSide))
                 {
-                    LevelEnter.Go(SaveData.Instance.CurrentSession_Safe, fromSaveData: true);
-                });
-            }
-            else if (SaveData.Instance.Areas_Safe[0].Modes[0].Completed || SaveData.Instance.CheatMode)
-            {
-                Logger.Log("CelesteArchipelago", "Going to overworld.");
-                if (SaveData.Instance.CurrentSession_Safe != null && SaveData.Instance.CurrentSession_Safe.ShouldAdvance)
-                {
-                    SaveData.Instance.LastArea_Safe.ID = SaveData.Instance.UnlockedAreas_Safe;
+                    SaveData.Instance.Areas_Safe[i].Cassette = true;
                 }
-                SaveData.Instance.CurrentSession_Safe = null;
-
-                (entryOui.Scene as Overworld).Goto<OuiChapterSelect>();
             }
-            else
+
+            // Retrieve current items from server.
+            ArchipelagoController.Instance.BlockMessages = true;
+            ArchipelagoController.Instance.ReceiveItemCallback(ArchipelagoController.Instance.Session.Items);
+            ArchipelagoController.Instance.ReplayClientCollected();
+            ArchipelagoController.Instance.CheckpointState.ApplyCheckpoints();
+            ArchipelagoController.Instance.BlockMessages = false;
+
+            // Enter tutorial if a new player.
+            if (state.DoTutorial())
             {
                 Logger.Log("CelesteArchipelago", "Starting tutorial.");
                 Audio.SetMusic(null);
                 Audio.SetAmbience(null);
-                SaveData.Instance.UnlockedAreas_Safe = SaveData.Instance.MaxArea;
-                for (int i = 1; i < SaveData.Instance.MaxArea; i++)
-                {
-                    if (AreaData.Areas[i].HasMode(AreaMode.BSide))
-                    {
-                        SaveData.Instance.Areas_Safe[i].Cassette = true;
-                    }
-                }
                 entryOui.Add(new Coroutine(EnterFirstAreaRoutine(entryOui)));
             }
+            // Return to previously selected overworld level, where relevant.
+            else if(state.IsOverworld)
+            {
+                Logger.Log("CelesteArchipelago", "Going to overworld.");
+                ArchipelagoController.Instance.ProgressionSystem.OnCollectedClient(new AreaKey(0), CollectableType.COMPLETION);
+                ArchipelagoController.Instance.ProgressionSystem.OnCollectedServer(new AreaKey(0), CollectableType.COMPLETION);
+                SaveData.Instance.LastArea_Safe.ID = state.AreaKey.ID;
+                (entryOui.Scene as Overworld).Goto<OuiChapterSelect>();
+            }
+            // Return to currently playing level, where relevant.
+            else
+            {
+                Logger.Log("CelesteArchipelago", "Entering existing level.");
+                Audio.SetMusic(null);
+                Audio.SetAmbience(null);
+
+                ArchipelagoController.Instance.ProgressionSystem.OnCollectedClient(new AreaKey(0), CollectableType.COMPLETION);
+                ArchipelagoController.Instance.ProgressionSystem.OnCollectedServer(new AreaKey(0), CollectableType.COMPLETION);
+                SaveData.Instance.LastArea_Safe = state.AreaKey;
+                Session session = new Session(state.AreaKey);
+                if (session.MapData.Get(state.Room) != null)
+                {
+                    if (AreaData.GetCheckpoint(state.AreaKey, state.Room) != null)
+                    {
+                        session = new Session(state.AreaKey, state.Room)
+                        {
+                            StartCheckpoint = null
+                        };
+                    }
+                    else
+                    {
+                        session.Level = state.Room;
+                    }
+                    session.StartedFromBeginning = (session.FirstLevel = state.Room == session.MapData.StartLevel().Name);
+                }
+                Engine.Scene = new LevelLoader(session);
+            }
+
             Logger.Log("CelesteArchipelago", "Leaving ArchipelagoStartButton.OnPress.");
         }
 

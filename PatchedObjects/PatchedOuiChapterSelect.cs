@@ -3,14 +3,11 @@ using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
-    public static class PatchedOuiChapterSelect
+    public class PatchedOuiChapterSelect : IPatchable
     {
         public static bool HasChanges = false;
         private static IDetour hook_OuiChapterSelect_orig_Added;
@@ -18,7 +15,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
         private delegate void orig_OuiChapterSelect_orig_Added(OuiChapterSelect self, Scene scene);
         private delegate void orig_OuiChapterSelect_orig_Update(OuiChapterSelect self);
 
-        internal static void Load()
+        public void Load()
         {
             hook_OuiChapterSelect_orig_Added = new Hook(
                 typeof(OuiChapterSelect).GetMethod("orig_Added"),
@@ -30,7 +27,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
             );
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             hook_OuiChapterSelect_orig_Added.Dispose();
             hook_OuiChapterSelect_orig_Update.Dispose();
@@ -55,7 +52,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
 
                 // NEW: Start
                 MTexture front, back;
-                if (CelesteArchipelagoSaveData.IsAccessible(i))
+                if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleLevel(new AreaKey(i)))
                 {
                     front = GFX.Gui[AreaData.Areas[i].Icon];
                     back = (GFX.Gui.Has(AreaData.Areas[i].Icon + "_back") ? GFX.Gui[AreaData.Areas[i].Icon + "_back"] : front);
@@ -92,7 +89,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 int count = AreaData.Areas.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    if (CelesteArchipelagoSaveData.IsAccessible(i))
+                    if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleLevel(new AreaKey(i)))
                     {
                         DynamicData.For(iconList[i]).Set("front", GFX.Gui[AreaData.Areas[i].Icon]);
                         DynamicData.For(iconList[i]).Set("back", (GFX.Gui.Has(AreaData.Areas[i].Icon + "_back") ? GFX.Gui[AreaData.Areas[i].Icon + "_back"] : DynamicData.For(iconList[i]).Get<MTexture>("front")));
@@ -188,7 +185,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                             //self.Overworld.Goto<OuiChapterPanel>();
 
                             // NEW: Start
-                            if (CelesteArchipelagoSaveData.IsAccessible(area))
+                            if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleLevel(new AreaKey(area)))
                             {
                                 Audio.Play("event:/ui/world_map/icon/select");
                                 SaveData.Instance.LastArea_Safe.Mode = AreaMode.Normal;

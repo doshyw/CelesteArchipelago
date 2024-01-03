@@ -1,22 +1,16 @@
-﻿using FMOD;
-using Monocle;
+﻿using Monocle;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
-    public static class PatchedStrawberry
+    public class PatchedStrawberry : IPatchable
     {
         private static IDetour hook_Strawberry_orig_OnCollect;
         private delegate void orig_Strawberry_orig_OnCollect(Strawberry self);
-        internal static void Load()
+        public void Load()
         {
             hook_Strawberry_orig_OnCollect = new Hook(
                 typeof(Strawberry).GetMethod("orig_OnCollect"),
@@ -25,16 +19,16 @@ namespace Celeste.Mod.CelesteArchipelago
             On.Celeste.Strawberry.ctor += ctor;
         }
 
-        private static void ctor(On.Celeste.Strawberry.orig_ctor orig, Strawberry self, EntityData data, Microsoft.Xna.Framework.Vector2 offset, EntityID gid)
-        {
-            orig(self, data, offset, gid);
-            DynamicData.For(self).Set("isGhostBerry", CelesteArchipelagoSaveData.GetStrawberryOutGame(SaveData.Instance.CurrentSession_Safe.Area.ID, self.ID));
-        }
-
-        internal static void Unload()
+        public void Unload()
         {
             hook_Strawberry_orig_OnCollect.Dispose();
             On.Celeste.Strawberry.ctor -= ctor;
+        }
+
+        private static void ctor(On.Celeste.Strawberry.orig_ctor orig, Strawberry self, EntityData data, Microsoft.Xna.Framework.Vector2 offset, EntityID gid)
+        {
+            orig(self, data, offset, gid);
+            DynamicData.For(self).Set("isGhostBerry", ArchipelagoController.Instance.ProgressionSystem.IsCollectedVisually(SaveData.Instance.CurrentSession_Safe.Area, CollectableType.STRAWBERRY, self.ID));
         }
 
         private static void orig_OnCollect(orig_Strawberry_orig_OnCollect orig, Strawberry self)
@@ -61,7 +55,7 @@ namespace Celeste.Mod.CelesteArchipelago
                     Achievements.Register(Achievement.WOW);
                 }
                 // SaveData.Instance.AddStrawberry(self.ID, self.Golden);
-                CelesteArchipelagoSaveData.SetStrawberryOutGame(SaveData.Instance.CurrentSession_Safe.Area.ID, self.ID); // NEW
+                ArchipelagoController.Instance.ProgressionSystem.OnCollectedClient(SaveData.Instance.CurrentSession_Safe.Area, CollectableType.STRAWBERRY, self.ID); // NEW
                 Session session = (self.Scene as Level).Session;
                 session.DoNotLoad.Add(self.ID);
                 // session.Strawberries.Add(self.ID);

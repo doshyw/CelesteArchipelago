@@ -6,23 +6,16 @@ using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
-    public enum ItemType
-    {
-        DEFAULT = 0,
-        CASSETTE = 1,
-        COMPLETION = 2,
-        GEMHEART = 3,
-        STRAWBERRY = 4
-    }
+    
 
-    internal class ArchipelagoNetworkItem
+    public class ArchipelagoNetworkItem
     {
         public const int OFFSET_BASE = 8000000;
         public const int OFFSET_KIND = 20000;
         public const int OFFSET_LEVEL = 1000;
         public const int OFFSET_SIDE = 100;
 
-        public ItemType type;
+        public CollectableType type;
         public int area;
         public int mode;
         public int offset;
@@ -35,7 +28,15 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             get
             {
-                return OFFSET_BASE + ((int)type) * OFFSET_KIND + area * OFFSET_LEVEL + mode * OFFSET_SIDE + offset;
+                return OFFSET_BASE + (int)type * OFFSET_KIND + area * OFFSET_LEVEL + mode * OFFSET_SIDE + offset;
+            }
+        }
+
+        public AreaKey areaKey
+        {
+            get
+            {
+                return new AreaKey(area, (AreaMode)mode);
             }
         }
 
@@ -43,7 +44,7 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             int temp = (int)(networkID % OFFSET_BASE);
 
-            type = (ItemType) (temp / OFFSET_KIND);
+            type = (CollectableType)(temp / OFFSET_KIND);
             temp %= OFFSET_KIND;
 
             area = temp / OFFSET_LEVEL;
@@ -53,13 +54,13 @@ namespace Celeste.Mod.CelesteArchipelago
             temp %= OFFSET_SIDE;
 
             offset = temp;
-            if (type == ItemType.STRAWBERRY)
+            if (type == CollectableType.STRAWBERRY)
             {
                 strawberry = GetStrawberryEntityID(area, mode, offset);
             }
         }
 
-        public ArchipelagoNetworkItem(ItemType type, int area, int mode, EntityID? strawberry = null)
+        public ArchipelagoNetworkItem(CollectableType type, int area, int mode, EntityID? strawberry = null)
         {
             this.type = type;
             this.area = area;
@@ -75,7 +76,24 @@ namespace Celeste.Mod.CelesteArchipelago
                 offset = (GetStrawberryOffset(strawberry.Value) ?? 99) % OFFSET_SIDE;
                 this.strawberry = GetStrawberryEntityID(area, mode, offset);
             }
-            
+        }
+
+        public ArchipelagoNetworkItem(CollectableType type, AreaKey area, EntityID? strawberry = null)
+        {
+            this.type = type;
+            this.area = area.ID;
+            this.mode = (int)area.Mode;
+
+            if (!strawberry.HasValue)
+            {
+                offset = 0;
+                this.strawberry = null;
+            }
+            else
+            {
+                offset = (GetStrawberryOffset(strawberry.Value) ?? 99) % OFFSET_SIDE;
+                this.strawberry = GetStrawberryEntityID(area.ID, mode, offset);
+            }
         }
 
         private static void BuildStrawberryMap()
@@ -91,10 +109,10 @@ namespace Celeste.Mod.CelesteArchipelago
                 {
                     ModeProperties modeProperties = area.Mode[i];
                     offset = 0;
-                    var maxJ = ((modeProperties.Checkpoints == null) ? 1 : (modeProperties.Checkpoints.Length + 1));
+                    var maxJ = modeProperties.Checkpoints == null ? 1 : modeProperties.Checkpoints.Length + 1;
                     for (int j = 0; j < maxJ; j++)
                     {
-                        var maxK = ((j == 0) ? modeProperties.StartStrawberries : modeProperties.Checkpoints[j - 1].Strawberries);
+                        var maxK = j == 0 ? modeProperties.StartStrawberries : modeProperties.Checkpoints[j - 1].Strawberries;
                         for (int k = 0; k < maxK; k++)
                         {
                             EntityData entityData = modeProperties.StrawberriesByCheckpoint[j, k];
@@ -136,7 +154,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 BuildStrawberryMap();
             }
 
-            if(StrawberryReverseMap.ContainsKey(strawberry.Key))
+            if (StrawberryReverseMap.ContainsKey(strawberry.Key))
             {
                 return StrawberryReverseMap[strawberry.Key];
             }

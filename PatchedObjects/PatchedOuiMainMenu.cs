@@ -1,40 +1,33 @@
-﻿using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework;
-using System;
+﻿using Microsoft.Xna.Framework;
 using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MonoMod.Utils;
-using System.Collections.Generic;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
-    public static class PatchedOuiMainMenu
+    public class PatchedOuiMainMenu : IPatchable
     {
 
-        internal static void Load()
+        public void Load()
         {
             On.Celeste.OuiMainMenu.Enter += Enter;
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             On.Celeste.OuiMainMenu.Enter -= Enter;
         }
 
         private static IEnumerator Enter(On.Celeste.OuiMainMenu.orig_Enter orig, OuiMainMenu self, Oui from)
         {
+            if(!ArchipelagoController.Instance.Enabled)
+            {
+                ArchipelagoController.Instance.Init();
+            }
+
             if (from is OuiChapterSelect)
             {
-                if (ArchipelagoConnection.Instance != null)
+                if (ArchipelagoController.Instance.IsConnected)
                 {
-                    ArchipelagoConnection.Instance.Disconnect();
-                }
-                if (CelesteArchipelagoModule.Instance.chatHandler != null)
-                {
-                    Celeste.Instance.Components.Remove(CelesteArchipelagoModule.Instance.chatHandler);
-                    CelesteArchipelagoModule.Instance.chatHandler.DeInit();
+                    ArchipelagoController.Instance.DisconnectSession();
                 }
             }
 

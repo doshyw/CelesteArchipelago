@@ -1,15 +1,6 @@
-﻿using Celeste.Mod.CelesteArchipelago.UI;
-using Celeste.Mod.UI;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Monocle;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -51,9 +42,6 @@ namespace Celeste.Mod.CelesteArchipelago
             textMenu.Add(new StringInput(settingsType.GetProperty("Server"), textMenu));
             textMenu.Add(new StringInput(settingsType.GetProperty("Port"), textMenu));
             textMenu.Add(new StringInput(settingsType.GetProperty("Password"), textMenu));
-            textMenu.Add(new EmptyPadding(24));
-            textMenu.Add(new PassiveDisplay(settingsType.GetProperty("UUID"), false));
-            textMenu.Add(new UUIDRegenerator(textMenu));
             textMenu.Add(new EmptyPadding(48));
             textMenu.Add(new ArchipelagoStartButton("Connect to Session", entryOui));
 
@@ -116,8 +104,11 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             Audio.Play("event:/ui/main/whoosh_large_out");
             menu.Focused = false;
-            savedMenuIndex = menu.Selection;
-            yield return Everest.SaveSettings();
+            UserIO.SaveHandler(file: false, settings: true);
+            while (UserIO.Saving)
+            {
+                yield return null;
+            }
             for (float p = 0f; p < 1f; p += Engine.DeltaTime * 4f)
             {
                 menu.X = 960f + 1920f * Ease.CubeIn(p);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
-    public class UnlockedBSide : Entity
+    public class ReplacementUnlockedBSide : Entity
     {
         private float alpha;
 

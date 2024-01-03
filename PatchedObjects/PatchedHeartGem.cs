@@ -1,26 +1,19 @@
-﻿using Celeste.Mod.CelesteArchipelago.PatchedObjects;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Monocle;
-using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
-    public static class PatchedHeartGem
+    public class PatchedHeartGem : IPatchable
     {
-        internal static void Load()
+        public void Load()
         {
             On.Celeste.HeartGem.Awake += Awake;
             On.Celeste.HeartGem.RegisterAsCollected += RegisterAsCollected;
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             On.Celeste.HeartGem.Awake -= Awake;
             On.Celeste.HeartGem.RegisterAsCollected -= RegisterAsCollected;
@@ -38,7 +31,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
             AreaKey area = (self.Scene as Level).Session.Area;
             // self.IsGhost = !self.IsFake && SaveData.Instance.Areas_Safe[area.ID].Modes[(int)area.Mode].HeartGem;
-            self.IsGhost = !self.IsFake && CelesteArchipelagoSaveData.GetHeartGemOutGame((int)area.Mode, area.ID); // NEW
+            self.IsGhost = !self.IsFake && ArchipelagoController.Instance.ProgressionSystem.IsCollectedVisually(area, CollectableType.HEARTGEM); // NEW
             string id = (self.IsFake ? "heartgem3" : ((!self.IsGhost) ? ("heartgem" + (int)area.Mode) : "heartGemGhost"));
 
             heartGem.Set("sprite", GFX.SpriteBank.Create(id));
@@ -140,11 +133,10 @@ namespace Celeste.Mod.CelesteArchipelago
             level.Session.UpdateLevelStartDashes();
             // int unlockedModes = SaveData.Instance.UnlockedModes;
             // SaveData.Instance.RegisterHeartGem(level.Session.Area);
-            CelesteArchipelagoSaveData.SetHeartGemOutGame((int)level.Session.Area.Mode, level.Session.Area.ID); // NEW
+            ArchipelagoController.Instance.ProgressionSystem.OnCollectedClient(level.Session.Area, CollectableType.HEARTGEM); // NEW
             if (!string.IsNullOrEmpty(poemID))
             {
-                // SaveData.Instance.RegisterPoemEntry(poemID);
-                CelesteArchipelagoModule.SaveData.Poems.Add(poemID.ToLower()); // NEW
+                SaveData.Instance.RegisterPoemEntry(poemID);
             }
             //if (unlockedModes < 3 && SaveData.Instance.UnlockedModes >= 3)
             //{

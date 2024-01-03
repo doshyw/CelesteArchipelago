@@ -1,20 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using Mono.Cecil;
 using Monocle;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
-    public static class PatchedOuiChapterPanel
+    public class PatchedOuiChapterPanel : IPatchable
     {
         private static Color BgColor = Calc.HexToColor("3c6180");
         private static Color BgColor_Grey = Calc.HexToColor("595959");
@@ -22,7 +15,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
         private static IDetour hook_OuiChapterPanel_orig_Update;
         private delegate void orig_OuiChapterPanel_orig_Added(OuiChapterPanel self);
 
-        internal static void Load()
+        public void Load()
         {
             hook_OuiChapterPanel_orig_Update = new Hook(
                 typeof(OuiChapterPanel).GetMethod("orig_Update"),
@@ -32,7 +25,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
             On.Celeste.OuiChapterPanel.Reset += Reset;
         }
 
-        internal static void Unload()
+        public void Unload()
         {
             hook_OuiChapterPanel_orig_Update.Dispose();
             On.Celeste.OuiChapterPanel.IsStart -= IsStart;
@@ -80,7 +73,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     wiggler.Start();
                     if (selectingMode)
                     {
-                        oui.Invoke("UpdateStats", true, null, null, null);
+                        oui.Invoke("UpdateStats", true, false, false, false);
                         oui.Invoke("PlayExpandSfx", oui.Get<float>("height"), (float)oui.Invoke<int>("GetModeHeight"));
                     }
                     else
@@ -95,7 +88,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     wiggler.Start();
                     if (selectingMode)
                     {
-                        oui.Invoke("UpdateStats", true, null, null, null);
+                        oui.Invoke("UpdateStats", true, false, false, false);
                         oui.Invoke("PlayExpandSfx", oui.Get<float>("height"), (float)oui.Invoke<int>("GetModeHeight"));
                     }
                     else
@@ -109,7 +102,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     {
                         if (!SaveData.Instance.FoundAnyCheckpoints(self.Area))
                         {
-                            if(CelesteArchipelagoSaveData.IsAccessible((int)self.Area.Mode, self.Area.ID))
+                            if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(self.Area))
                             {
                                 self.Start();
                             }
@@ -126,7 +119,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     }
                     else
                     {
-                        if (CelesteArchipelagoSaveData.IsAccessible((int)self.Area.Mode, self.Area.ID))
+                        if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(self.Area))
                         {
                             option = DynamicData.For(options.TargetType.GetProperty("Item").GetValue(options.Target, new object[] { intOption }));
                             self.Start(option.Get<string>("CheckpointLevelName"));
@@ -185,7 +178,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 option.Set("Label", Dialog.Clean("overworld_remix"));
                 option.Set("ID", "B");
                 option.Set("Bg", GFX.Gui[panel.Invoke<string>("_ModAreaselectTexture", "areaselect/tab")]);
-                if (CelesteArchipelagoSaveData.IsAccessible(1, self.Data.ID))
+                if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(self.Data.ID, AreaMode.BSide)))
                 {
                     option.Set("Icon", GFX.Gui[panel.Invoke<string>("_ModMenuTexture", "menu/remix")]);
                     option.Set("BgColor", BgColor);
@@ -204,7 +197,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 option.Set("Label", Dialog.Clean("overworld_remix2"));
                 option.Set("ID", "C");
                 option.Set("Bg", GFX.Gui[panel.Invoke<string>("_ModAreaselectTexture", "areaselect/tab")]);
-                if (CelesteArchipelagoSaveData.IsAccessible(2, self.Data.ID))
+                if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(self.Data.ID, AreaMode.CSide)))
                 {
                     option.Set("Icon", GFX.Gui[panel.Invoke<string>("_ModMenuTexture", "menu/rmx2")]);
                     option.Set("BgColor", BgColor);
@@ -252,7 +245,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
             option.Set("Label", Dialog.Clean(self.Data.Interlude_Safe ? "FILE_BEGIN" : "overworld_normal").ToUpper());
             option.Set("ID", "A");
             option.Set("Bg", GFX.Gui[panel.Invoke<string>("_ModAreaselectTexture", "areaselect/tab")]);
-            if (CelesteArchipelagoSaveData.IsAccessible(0, self.Data.ID))
+            if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(self.Data.ID, AreaMode.Normal)))
             {
                 option.Set("Icon", GFX.Gui[panel.Invoke<string>("_ModMenuTexture", "menu/play")]);
                 option.Set("BgColor", BgColor);
@@ -271,7 +264,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 option.Set("Label", Dialog.Clean("overworld_remix"));
                 option.Set("ID", "B");
                 option.Set("Bg", GFX.Gui[panel.Invoke<string>("_ModAreaselectTexture", "areaselect/tab")]);
-                if (CelesteArchipelagoSaveData.IsAccessible(1, self.Data.ID))
+                if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(self.Data.ID, AreaMode.BSide)))
                 {
                     option.Set("Icon", GFX.Gui[panel.Invoke<string>("_ModMenuTexture", "menu/remix")]);
                     option.Set("BgColor", BgColor);
@@ -290,7 +283,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 option.Set("Label", Dialog.Clean("overworld_remix2"));
                 option.Set("ID", "C");
                 option.Set("Bg", GFX.Gui[panel.Invoke<string>("_ModAreaselectTexture", "areaselect/tab")]);
-                if (CelesteArchipelagoSaveData.IsAccessible(2, self.Data.ID))
+                if (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(self.Data.ID, AreaMode.CSide)))
                 {
                     option.Set("Icon", GFX.Gui[panel.Invoke<string>("_ModMenuTexture", "menu/rmx2")]);
                     option.Set("BgColor", BgColor);
@@ -303,7 +296,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                 options.Invoke("Add", newOption);
             }
             panel.Set("selectingMode", true);
-            panel.Invoke("UpdateStats", false, null, null, null);
+            panel.Invoke("UpdateStats", false, false, false, false);
             panel.Invoke("SetStatsPosition", false);
 
             options = DynamicData.For(panel.Get("options"));

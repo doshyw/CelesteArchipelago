@@ -1,18 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Monocle;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
+namespace Celeste.Mod.CelesteArchipelago
 {
-    internal class PatchedOuiJournalProgress : OuiJournalPage
+    internal class ReplacementOuiJournalProgress : OuiJournalPage
     {
         private Table table;
 
-        public PatchedOuiJournalProgress(OuiJournal journal)
+        public ReplacementOuiJournalProgress(OuiJournal journal)
             : base(journal)
         {
             PageTexture = "page";
@@ -71,7 +67,7 @@ namespace Celeste.Mod.CelesteArchipelago.PatchedObjects
                     .Add(iconsCell = new IconsCell(CompletionIcon(item)));
                 if (areaData.CanFullClear)
                 {
-                    row.Add(new IconsCell(CelesteArchipelagoSaveData.GetCassetteInGame(item.ID_Safe) ? "cassette" : "dot"));
+                    row.Add(new IconsCell(ArchipelagoController.Instance.ProgressionSystem.IsCollectedVisually(new AreaKey(item.ID_Safe), CollectableType.CASSETTE) ? "cassette" : "dot"));
                     row.Add(new IconsCell(-32f, list.ToArray()));
                 }
                 else
