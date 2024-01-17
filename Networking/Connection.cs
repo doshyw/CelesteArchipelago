@@ -8,6 +8,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using Archipelago.MultiClient.Net.Enums;
 using System.Collections.Generic;
+using Monocle;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -42,6 +43,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public override void Update(GameTime gameTime)
         {
+
             switch(connectionState)
             {
                 case ConnectionState.UNCONNECTED:
@@ -149,6 +151,11 @@ namespace Celeste.Mod.CelesteArchipelago
 
         protected override void Dispose(bool disposing)
         {
+            if (connectionState == ConnectionState.LOGGED_IN)
+            {
+                Engine.Scene = new OverworldLoader(Overworld.StartMode.MainMenu);
+                ArchipelagoController.Instance.HandleMessage("Lost connection to Archipelago server.", Color.Red);
+            }
             Enabled = false;
             connectionState = ConnectionState.UNCONNECTED;
             if (connectTask != null && !connectTask.IsCompleted) connectTask.Wait();

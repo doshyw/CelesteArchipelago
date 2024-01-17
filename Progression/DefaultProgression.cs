@@ -5,7 +5,7 @@ namespace Celeste.Mod.CelesteArchipelago
 {
     public class DefaultProgression : IProgressionSystem
     {
-        private CollectableStorage<EntityID> Strawberries { get; set; } = new CollectableStorage<EntityID>();
+        private int StrawberryCount { get; set; } = 0;
         private FlagStorage CassettesVisual { get; set; } = new FlagStorage();
         private FlagStorage CassettesLogical { get; set; } = new FlagStorage();
         private FlagStorage HeartGems { get; set; } = new FlagStorage();
@@ -86,7 +86,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 case CollectableType.HEARTGEM:
                     return HeartGems.IsFlagged(area);
                 case CollectableType.STRAWBERRY:
-                    return entity != null && Strawberries.Contains(area, entity.Value);
+                    return false;
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
             }
@@ -132,8 +132,7 @@ namespace Celeste.Mod.CelesteArchipelago
                     HeartGems.Flag(area);
                     break;
                 case CollectableType.STRAWBERRY:
-                    if (entity == null) return;
-                    Strawberries.Put(area, entity.Value);
+                    StrawberryCount += 1;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
@@ -172,7 +171,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 case CollectableType.HEARTGEM:
                     return HeartGems.GetTotal();
                 case CollectableType.STRAWBERRY:
-                    return Strawberries.GetTotal();
+                    return StrawberryCount;
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
             }
