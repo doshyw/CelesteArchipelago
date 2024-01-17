@@ -43,7 +43,6 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public override void Update(GameTime gameTime)
         {
-
             switch(connectionState)
             {
                 case ConnectionState.UNCONNECTED:
