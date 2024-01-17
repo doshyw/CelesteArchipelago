@@ -32,6 +32,11 @@ namespace Celeste.Mod.CelesteArchipelago
             var goalLevel = GetGoalLevel();
             bool externalCheck = !(area == goalLevel) || IsGoalLevelAccessible();
 
+            if (LevelIsBefore(goalLevel, area))
+            {
+                return false;
+            }
+
             if (area.Mode == AreaMode.Normal)
             {
                 return externalCheck && (
@@ -48,8 +53,7 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 return externalCheck &&
                     IsCollectedLogically(new AreaKey(area.ID, AreaMode.Normal), CollectableType.HEARTGEM)
-                    && IsCollectedLogically(new AreaKey(area.ID, AreaMode.BSide), CollectableType.HEARTGEM)
-                ;
+                    && IsCollectedLogically(new AreaKey(area.ID, AreaMode.BSide), CollectableType.HEARTGEM);
             }
             return false;
         }
@@ -172,6 +176,13 @@ namespace Celeste.Mod.CelesteArchipelago
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
             }
+        }
+
+        private bool LevelIsBefore(AreaKey area1, AreaKey area2)
+        {
+            int hash1 = area1.ID * 100 + (int)area1.Mode;
+            int hash2 = area2.ID * 100 + (int)area2.Mode;
+            return hash1 < hash2;
         }
 
         private AreaKey GetGoalLevel()
