@@ -14,6 +14,7 @@ namespace Celeste.Mod.CelesteArchipelago
         public long HeartsRequired { get; set; } = 15;
         public long LevelsRequired { get; set; } = 0;
         public long VictoryCondition { get; set; } = 0;
+        public long ProgressionSystem { get; set; } = 0;
 
         private Dictionary<string, PropertyInfo> keyPropertyMap = new Dictionary<string, PropertyInfo>
         {
@@ -22,6 +23,7 @@ namespace Celeste.Mod.CelesteArchipelago
             { "hearts_required", typeof(ArchipelagoSlotData).GetProperty("HeartsRequired") },
             { "levels_required", typeof(ArchipelagoSlotData).GetProperty("LevelsRequired") },
             { "victory_condition", typeof(ArchipelagoSlotData).GetProperty("VictoryCondition") },
+            { "progression_system", typeof(ArchipelagoSlotData).GetProperty("ProgressionSystem") },
         };
 
         public ArchipelagoSlotData(Dictionary<string, object> slotData)
@@ -56,5 +58,10 @@ namespace Celeste.Mod.CelesteArchipelago
         CHAPTER_7_SUMMIT = 0,
         CHAPTER_8_CORE = 1,
         CHAPTER_9_FAREWELL = 2,
+    }
+
+    internal enum ProgressionSystemOptions
+    {
+        DEFAULT_PROGRESSION = 0,
     }
 }

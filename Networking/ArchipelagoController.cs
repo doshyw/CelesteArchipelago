@@ -6,6 +6,7 @@ using Archipelago.MultiClient.Net.Packets;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -57,7 +58,7 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             get
             {
-                return Connection.IsConnected;
+                return Connection != null && Connection.IsConnected;
             }
         }
 
@@ -140,7 +141,10 @@ namespace Celeste.Mod.CelesteArchipelago
                 if(loginResult.Successful)
                 {
                     Session.Items.ItemReceived += ReceiveItemCallback;
-                    ProgressionSystem = new DefaultProgression(SlotData);
+                    if (SlotData.ProgressionSystem == (int)ProgressionSystemOptions.DEFAULT_PROGRESSION)
+                    {
+                        ProgressionSystem = new DefaultProgression(SlotData);
+                    }
                     Session.DataStorage[Scope.Slot, "CelestePlayState"].Initialize("1;0;0;dotutorial");
                     Session.DataStorage[Scope.Slot, "CelesteCheckpointState"].Initialize(long.MinValue);
 

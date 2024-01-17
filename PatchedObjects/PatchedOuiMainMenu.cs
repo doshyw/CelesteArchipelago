@@ -18,13 +18,13 @@ namespace Celeste.Mod.CelesteArchipelago
 
         private static IEnumerator Enter(On.Celeste.OuiMainMenu.orig_Enter orig, OuiMainMenu self, Oui from)
         {
-            if(!ArchipelagoController.Instance.Enabled)
+            if (ArchipelagoController.Instance != null)
             {
-                ArchipelagoController.Instance.Init();
-            }
+                if (!ArchipelagoController.Instance.Enabled)
+                {
+                    ArchipelagoController.Instance.Init();
+                }
 
-            if (from is OuiChapterSelect)
-            {
                 if (ArchipelagoController.Instance.IsConnected)
                 {
                     ArchipelagoController.Instance.DisconnectSession();

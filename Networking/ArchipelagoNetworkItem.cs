@@ -36,7 +36,9 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             get
             {
-                return new AreaKey(area, (AreaMode)mode);
+                var areaKey = new AreaKey(0, (AreaMode)mode);
+                areaKey.ID = area;
+                return areaKey;
             }
         }
 

@@ -5,7 +5,7 @@ namespace Celeste.Mod.CelesteArchipelago
 {
     public class DefaultProgression : IProgressionSystem
     {
-        private CollectableStorage<EntityID> Strawberries { get; set; } = new CollectableStorage<EntityID>();
+        private int StrawberryCount { get; set; } = 0;
         private FlagStorage CassettesVisual { get; set; } = new FlagStorage();
         private FlagStorage CassettesLogical { get; set; } = new FlagStorage();
         private FlagStorage HeartGems { get; set; } = new FlagStorage();
@@ -32,6 +32,11 @@ namespace Celeste.Mod.CelesteArchipelago
             var goalLevel = GetGoalLevel();
             bool externalCheck = !(area == goalLevel) || IsGoalLevelAccessible();
 
+            if (LevelIsBefore(goalLevel, area))
+            {
+                return false;
+            }
+
             if (area.Mode == AreaMode.Normal)
             {
                 return externalCheck && (
@@ -48,8 +53,7 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 return externalCheck &&
                     IsCollectedLogically(new AreaKey(area.ID, AreaMode.Normal), CollectableType.HEARTGEM)
-                    && IsCollectedLogically(new AreaKey(area.ID, AreaMode.BSide), CollectableType.HEARTGEM)
-                ;
+                    && IsCollectedLogically(new AreaKey(area.ID, AreaMode.BSide), CollectableType.HEARTGEM);
             }
             return false;
         }
@@ -82,7 +86,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 case CollectableType.HEARTGEM:
                     return HeartGems.IsFlagged(area);
                 case CollectableType.STRAWBERRY:
-                    return entity != null && Strawberries.Contains(area, entity.Value);
+                    return false;
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
             }
@@ -128,8 +132,7 @@ namespace Celeste.Mod.CelesteArchipelago
                     HeartGems.Flag(area);
                     break;
                 case CollectableType.STRAWBERRY:
-                    if (entity == null) return;
-                    Strawberries.Put(area, entity.Value);
+                    StrawberryCount += 1;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
@@ -168,10 +171,17 @@ namespace Celeste.Mod.CelesteArchipelago
                 case CollectableType.HEARTGEM:
                     return HeartGems.GetTotal();
                 case CollectableType.STRAWBERRY:
-                    return Strawberries.GetTotal();
+                    return StrawberryCount;
                 default:
                     throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
             }
+        }
+
+        private bool LevelIsBefore(AreaKey area1, AreaKey area2)
+        {
+            int hash1 = area1.ID * 100 + (int)area1.Mode;
+            int hash2 = area2.ID * 100 + (int)area2.Mode;
+            return hash1 < hash2;
         }
 
         private AreaKey GetGoalLevel()
