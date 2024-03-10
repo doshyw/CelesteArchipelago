@@ -38,10 +38,14 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             if(self.Requires != 1)
             {
-                return orig(self);
+                if (SaveData.Instance.CheatMode)
+                {
+                    return self.Requires;
+                }
+                return ArchipelagoController.Instance.ProgressionSystem.GetTotalLogically(CollectableType.HEARTGEM);
             }
 
-            return (ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(10, AreaMode.Normal)) ? 1 : 0);
+            return ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(10, AreaMode.Normal)) ? 1 : 0;
         }
 
     }

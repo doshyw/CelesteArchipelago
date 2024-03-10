@@ -14,5 +14,7 @@
         public int GetTotalVisually(CollectableType collectable);
         public int GetTotalLogically(CollectableType collectable);
 
+        public AreaKey GetGoalLevel();
+
     }
 }

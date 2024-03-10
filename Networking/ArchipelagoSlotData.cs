@@ -55,9 +55,13 @@ namespace Celeste.Mod.CelesteArchipelago
 
     internal enum VictoryConditionOptions
     {
-        CHAPTER_7_SUMMIT = 0,
-        CHAPTER_8_CORE = 1,
-        CHAPTER_9_FAREWELL = 2,
+        CHAPTER_7_SUMMIT_A = 0,
+        CHAPTER_8_CORE_A = 1,
+        CHAPTER_9_FAREWELL_A = 2,
+        CHAPTER_7_SUMMIT_B = 3,
+        CHAPTER_8_CORE_B = 4,
+        CHAPTER_7_SUMMIT_C = 5,
+        CHAPTER_8_CORE_C = 6,
     }
 
     internal enum ProgressionSystemOptions

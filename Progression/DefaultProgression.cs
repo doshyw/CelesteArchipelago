@@ -184,16 +184,24 @@ namespace Celeste.Mod.CelesteArchipelago
             return hash1 < hash2;
         }
 
-        private AreaKey GetGoalLevel()
+        public AreaKey GetGoalLevel()
         {
             var option = (VictoryConditionOptions)SlotData.VictoryCondition;
             switch (option)
             {
-                case VictoryConditionOptions.CHAPTER_7_SUMMIT:
+                case VictoryConditionOptions.CHAPTER_7_SUMMIT_A:
                     return new AreaKey(7, AreaMode.Normal);
-                case VictoryConditionOptions.CHAPTER_8_CORE:
+                case VictoryConditionOptions.CHAPTER_7_SUMMIT_B:
+                    return new AreaKey(7, AreaMode.BSide);
+                case VictoryConditionOptions.CHAPTER_7_SUMMIT_C:
+                    return new AreaKey(7, AreaMode.CSide);
+                case VictoryConditionOptions.CHAPTER_8_CORE_A:
                     return new AreaKey(9, AreaMode.Normal);
-                case VictoryConditionOptions.CHAPTER_9_FAREWELL:
+                case VictoryConditionOptions.CHAPTER_8_CORE_B:
+                    return new AreaKey(9, AreaMode.BSide);
+                case VictoryConditionOptions.CHAPTER_8_CORE_C:
+                    return new AreaKey(9, AreaMode.CSide);
+                case VictoryConditionOptions.CHAPTER_9_FAREWELL_A:
                     return new AreaKey(10, AreaMode.Normal);
                 default:
                     throw new ArgumentOutOfRangeException($"Victory Condition {option} not implemented.");
