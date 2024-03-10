@@ -30,6 +30,10 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 data.Values["requires"] = 1;
             }
+            if (ArchipelagoController.Instance.SlotData.DisableHeartGates == 1)
+            {
+                (self.Scene as Level).Session.SetFlag("opened_heartgem_door_" + self.Requires);
+            }
             orig(self, data, offset);
         }
 
