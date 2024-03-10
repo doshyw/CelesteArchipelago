@@ -26,10 +26,6 @@ namespace Celeste.Mod.CelesteArchipelago
 
         private static void ctor(On.Celeste.HeartGemDoor.orig_ctor orig, HeartGemDoor self, EntityData data, Vector2 offset)
         {
-            if(AreaData.Areas[10].Mode[0].MapData.Levels.Contains(data.Level))
-            {
-                data.Values["requires"] = 1;
-            }
             if (ArchipelagoController.Instance.SlotData.DisableHeartGates == 1)
             {
                 (self.Scene as Level).Session.SetFlag("opened_heartgem_door_" + self.Requires);
@@ -40,16 +36,11 @@ namespace Celeste.Mod.CelesteArchipelago
         private delegate int orig_HeartGemDoor_get_HeartGems(HeartGemDoor self);
         private static int Get_HeartGems(orig_HeartGemDoor_get_HeartGems orig, HeartGemDoor self)
         {
-            if(self.Requires != 1)
+            if (SaveData.Instance.CheatMode)
             {
-                if (SaveData.Instance.CheatMode)
-                {
-                    return self.Requires;
-                }
-                return ArchipelagoController.Instance.ProgressionSystem.GetTotalLogically(CollectableType.HEARTGEM);
+                return self.Requires;
             }
-
-            return ArchipelagoController.Instance.ProgressionSystem.IsAccessibleSide(new AreaKey(10, AreaMode.Normal)) ? 1 : 0;
+            return ArchipelagoController.Instance.ProgressionSystem.GetTotalLogically(CollectableType.HEARTGEM);
         }
 
     }
