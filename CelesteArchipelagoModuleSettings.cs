@@ -18,6 +18,28 @@ namespace Celeste.Mod.CelesteArchipelago {
         [DefaultButtonBinding(Buttons.RightThumbstickDown, Keys.Z)]
         public ButtonBinding ScrollChatDown { get; set; }
         
-        public bool DeathLink { get; set; } = false;
+        public bool DeathLink
+        {
+            get => _deathLink;
+            set
+            {
+                if (ArchipelagoController.Instance is not null &&
+                    ArchipelagoController.Instance.DeathLinkService is not null)
+                {
+                    switch (value)
+                    {
+                        case true when !_deathLink:
+                            ArchipelagoController.Instance.DeathLinkService.EnableDeathLink();
+                            break;
+                        case false when _deathLink:
+                            ArchipelagoController.Instance.DeathLinkService.DisableDeathLink();
+                            break;
+                    }
+                }
+                _deathLink = value;
+            }
+        }
+
+        private bool _deathLink = false;
     }
 }
