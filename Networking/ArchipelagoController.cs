@@ -207,7 +207,7 @@ namespace Celeste.Mod.CelesteArchipelago
             string completeMessage;
             if (string.IsNullOrEmpty(deathLink.Cause))
             {
-                completeMessage = $"DeathLink from {deathLink.Source}: {deathLink.Source} died.";
+                completeMessage = $"DeathLink from {deathLink.Source}: {deathLink.Source} died";
             }
             else
             {
