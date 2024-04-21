@@ -10,11 +10,14 @@ namespace Celeste.Mod.CelesteArchipelago {
         public string Server { get; set; } = "";
         public string Port { get; set; } = "38281";
 
+
         [DefaultButtonBinding(Buttons.Back, Keys.T)]
         public ButtonBinding ToggleChat { get; set; }
         [DefaultButtonBinding(Buttons.RightThumbstickUp, Keys.Q)]
         public ButtonBinding ScrollChatUp { get; set; }
         [DefaultButtonBinding(Buttons.RightThumbstickDown, Keys.Z)]
         public ButtonBinding ScrollChatDown { get; set; }
+        
+        public bool DeathLink { get; set; } = false;
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using Archipelago.MultiClient.Net.MessageLog.Parts;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -62,6 +64,10 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
+        public DeathLinkService DeathLinkService { get; private set; }
+        public DeathLinkStatus DeathLinkStatus { get; set; } = DeathLinkStatus.None;
+        public DateTime LatestDeath { get; set; } = DateTime.MinValue;
+
         private ChatHandler ChatHandler { get; set; }
         private Connection Connection { get; set; }
         private VictoryConditionOptions VictoryCondition
@@ -79,6 +85,7 @@ namespace Celeste.Mod.CelesteArchipelago
             new PatchedOuiChapterSelect(),
             new PatchedOuiMainMenu(),
             new PatchedOuiJournal(),
+            new PatchedPlayer(),
             new PatchedSaveData(),
             new PatchedStrawberry(),
         };
@@ -148,6 +155,18 @@ namespace Celeste.Mod.CelesteArchipelago
                     Session.DataStorage[Scope.Slot, "CelestePlayState"].Initialize("1;0;0;dotutorial");
                     Session.DataStorage[Scope.Slot, "CelesteCheckpointState"].Initialize(long.MinValue);
 
+                    DeathLinkService = Session.CreateDeathLinkService();
+                    DeathLinkService.OnDeathLinkReceived += ReceiveDeathLinkCallback;
+
+                    if (CelesteArchipelagoModule.Settings.DeathLink)
+                    {
+                        DeathLinkService.EnableDeathLink();
+                    }
+                    else
+                    {
+                        DeathLinkService.DisableDeathLink();
+                    }
+
                     Connection.Disposed += (sender, args) =>
                     {
                         Session.MessageLog.OnMessageReceived -= HandleMessage;
@@ -180,6 +199,39 @@ namespace Celeste.Mod.CelesteArchipelago
                 // Collect received item via chosen progression system
                 ProgressionSystem.OnCollectedServer(item.areaKey, item.type, item.strawberry);
                 receivedItemsHelper.DequeueItem();
+            }
+        }
+        
+        public void ReceiveDeathLinkCallback(DeathLink deathLink)
+        {
+            string completeMessage;
+            if (string.IsNullOrEmpty(deathLink.Cause))
+            {
+                completeMessage = $"DeathLink from {deathLink.Source}: {deathLink.Source} died.";
+            }
+            else
+            {
+                completeMessage = $"DeathLink from {deathLink.Source}: {deathLink.Cause}";
+            }
+            
+            ChatHandler.HandleMessage(completeMessage, Color.PaleVioletRed);
+
+            if (DeathLinkStatus == DeathLinkStatus.None && LatestDeath < deathLink.Timestamp)
+            {
+                // wait for Madeline to die
+                DeathLinkStatus = DeathLinkStatus.Pending;
+            }
+        }
+
+        public void SendDeathLinkCallback()
+        {
+            var deathLink = new DeathLink(Session.Players.GetPlayerAlias(Session.ConnectionInfo.Slot));
+
+            LatestDeath = deathLink.Timestamp;
+            
+            if (DeathLinkStatus == DeathLinkStatus.None)
+            {
+                DeathLinkService.SendDeathLink(deathLink);
             }
         }
 
