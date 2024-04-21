@@ -9,6 +9,6 @@ namespace Celeste.Mod.CelesteArchipelago {
         public string Password { get; set; } = "";
         public string Server { get; set; } = "";
         public string Port { get; set; } = "38281";
-
+        public bool DeathLink { get; set; } = false;
     }
 }
