@@ -21,11 +21,11 @@ public class PatchedPlayer : IPatchable
 
     private static void Update(On.Celeste.Player.orig_Update orig, Player self)
     {
-        orig.Invoke(self);
         if (ArchipelagoController.Instance.DeathLinkStatus == DeathLinkStatus.Pending)
         {
             self.Die(Vector2.Zero, true);
         }
+        orig.Invoke(self);
     }
 
     private static void OnSpawn(Player player)
