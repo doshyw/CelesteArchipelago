@@ -1,67 +1,42 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Monocle;
-using System;
+using System.Drawing;
+using System.Linq;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
+using Microsoft.Xna.Framework.Input;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
     public class ChatHandler : DrawableGameComponent
     {
+        private const float TextAlpha = 1f;
+
+        private const float TextHeightProportion = 0.03f;
+        
+        private static readonly Color ChatBoxColor = Color.Black * 0.3f;
+
         public ChatLog Log = new ChatLog();
 
-        public float TextAlpha = 1f;
-        public float ChatBoxAlpha = 0.3f;
+        private bool isVisible = false;
+        private KeyboardState keyboardState;
 
-        public Color TextColor = Color.White;
-        public Color ChatBoxColor = Color.Black;
+        private int screenHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        private int screenWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        private float targetTextHeight => screenHeight * TextHeightProportion;
+        private readonly float leftPadding;
+        private readonly float bottomPadding;
 
-        public float TextHeightProportion = 0.03f;
-
-        public TimeSpan messagePreviewTime = new TimeSpan(0, 0, 10);
-
-        private int screenHeight
-        {
-            get
-            {
-                return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            }
-        }
-
-        private int screenWidth
-        {
-            get
-            {
-                return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            }
-        }
-
-        private float targetTextHeight
-        {
-            get
-            {
-                return screenHeight * TextHeightProportion;
-            }
-        }
-
-        private float windowOffset
-        {
-            get
-            {
-                return screenHeight * TextHeightProportion;
-            }
-        }
-
-        private float textBorderOffset
-        {
-            get
-            {
-                return 0.5f * screenHeight * TextHeightProportion;
-            }
-        }
+        private RectangleF bounds;
 
         public ChatHandler(Game game) : base(game)
         {
+            leftPadding = screenHeight * TextHeightProportion;
+            bottomPadding = screenHeight * TextHeightProportion;
+            var boundsHeight = screenHeight * 0.3f;
+            var boundsWidth = screenWidth * 0.4f;
+            bounds = new RectangleF(leftPadding, screenHeight - boundsHeight - bottomPadding, boundsWidth, boundsHeight);
+
             UpdateOrder = 10000;
             DrawOrder = 10000;
             Enabled = false;
@@ -100,68 +75,54 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
-        Vector4 RenderLine(Vector2 bottomLeft, ChatLine chatLine, float fadeAlpha)
-        {
-            float scalingFactor = targetTextHeight / chatLine.MaxTextHeight;
-
-            float rectangleWidth = scalingFactor * (chatLine.TotalTextWidth + 2 * textBorderOffset);
-            float rectangleHeight = scalingFactor * (chatLine.MaxTextHeight + 2 * textBorderOffset);
-            RenderRect(
-                bottomLeft.X,
-                bottomLeft.Y - rectangleHeight,
-                rectangleWidth,
-                rectangleHeight,
-                ChatBoxColor * ChatBoxAlpha * fadeAlpha
-            );
-
-            Vector2 sizeText;
-            float wordOffset = bottomLeft.X + scalingFactor * textBorderOffset;
-            foreach (var element in chatLine.Elements)
-            {
-                sizeText = CelesteNetClientFont.Measure(element.text);
-                CelesteNetClientFont.Draw(
-                    element.text,
-                    new Vector2(wordOffset, bottomLeft.Y - scalingFactor * (sizeText.Y + textBorderOffset)),
-                    Vector2.Zero,
-                    Vector2.One * scalingFactor,
-                    element.color * TextAlpha * fadeAlpha
-                );
-                wordOffset += scalingFactor * sizeText.X;
-            }
-
-            return new Vector4(bottomLeft.X, bottomLeft.Y - rectangleHeight, rectangleWidth, rectangleHeight);
-
-        }
-
         void Render(GameTime gameTime)
         {
             lock(Log)
             {
-                DateTime now = DateTime.Now;
+                RenderRectF(bounds, ChatBoxColor);
 
-                float yOffset = windowOffset;
-                float deltaToFade, fadeAlpha;
-                Vector4 previousBounds;
-                foreach (var line in Log.GetLogWithTimeout((float)messagePreviewTime.TotalSeconds))
+                float yOffset = bottomPadding;
+                foreach (var line in Log.GetLog().Reverse())
                 {
-                    if ((now - line.createdTime).TotalSeconds > messagePreviewTime.TotalSeconds) continue;
-                    deltaToFade = (float)((now - line.createdTime).TotalSeconds - messagePreviewTime.TotalSeconds / 2f);
-                    if (deltaToFade <= 0)
+
+                    float scalingFactor = targetTextHeight / line.MaxTextHeight;
+
+                    foreach (var element in line.Elements)
                     {
-                        fadeAlpha = 1;
+                        var parsedText = parseText(element.text, scalingFactor);
+                        var lineCount = parsedText.Count(x => x == '\n');
+                        yOffset += lineCount * line.MaxTextHeight * scalingFactor;
+                        var position = new Vector2(leftPadding, bounds.Bottom - yOffset);
+                        CelesteNetClientFont.Draw(
+                            parsedText,
+                            position,
+                            Vector2.One * scalingFactor,
+                            element.color * TextAlpha
+                        );
                     }
-                    else
-                    {
-                        fadeAlpha = 1f - Ease.CubeIn(deltaToFade);
-                    }
-                    previousBounds = RenderLine(new Vector2(windowOffset, screenHeight - yOffset), line, fadeAlpha);
-                    yOffset += previousBounds.W + 1;
+
+                    yOffset += line.MaxTextHeight * scalingFactor;
                 }
             }
         }
 
         public override void Draw(GameTime gameTime)
         {
+            var previousState = keyboardState;
+            keyboardState = Keyboard.GetState();
+
+            if (keyboardState.IsKeyDown(Keys.T) && previousState.IsKeyUp(Keys.T))
+            {
+                isVisible = !isVisible;
+            }
+
+            bounds.Width += (int)keyboardState[Keys.NumPad6] * 3;
+            bounds.Width -= (int)keyboardState[Keys.NumPad4] * 3;
+            bounds.Height += (int)keyboardState[Keys.NumPad8] * 3;
+            bounds.Height -= (int)keyboardState[Keys.NumPad2] * 3;
+
+            if (!isVisible) return;
+            
             Monocle.Draw.SpriteBatch.Begin(
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
@@ -171,20 +132,39 @@ namespace Celeste.Mod.CelesteArchipelago
                 null,
                 Matrix.Identity
             );
-
+            DrawDebug();
             Render(gameTime);
-
             Monocle.Draw.SpriteBatch.End();
         }
 
-        private void RenderRect(float x, float y, float width, float height, Color color)
+        private void RenderRectF(RectangleF rect, Color color)
         {
-            int xi = (int)Math.Floor(x);
-            int yi = (int)Math.Floor(y);
-            int wi = (int)Math.Ceiling(x + width) - xi;
-            int hi = (int)Math.Ceiling(y + height) - yi;
+            Monocle.Draw.Rect(rect.X, rect.Y, rect.Width, rect.Height, color);
+        }
 
-            Monocle.Draw.Rect(xi, yi, wi, hi, color);
+        private void DrawDebug()
+        {
+            CelesteNetClientFont.Draw($"X:{bounds.X} Y:{bounds.Y} W:{bounds.Width} H:{bounds.Height}", new(10, 10), Color.White);
+        }
+
+        private string parseText(string text, float scalingFactor)
+        {
+            string line = string.Empty;
+            string returnString = string.Empty;
+            string[] wordArray = text.Split(' ');
+
+            foreach (string word in wordArray)
+            {
+                if (CelesteNetClientFont.Measure(line + word).X > bounds.Width * (1 / scalingFactor))
+                {
+                    returnString = returnString + line + '\n';
+                    line = string.Empty;
+                }
+
+                line = line + word + ' ';
+            }
+
+            return returnString + line;
         }
     }
 }

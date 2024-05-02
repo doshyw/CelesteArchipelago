@@ -99,6 +99,8 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             Enabled = true;
             ChatHandler.Init();
+            HandleMessage("Hello, my name is tester testington the first, I am here to take up room on a single line", Color.White);
+            HandleMessage("Hello, my name is tester testington the 2nd, I am here to take up room on a single line", Color.White);
         }
 
         public override void Update(GameTime gameTime)
