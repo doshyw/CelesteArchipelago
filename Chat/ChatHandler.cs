@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Drawing;
 using System.Linq;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
+using Celeste.Mod.CelesteArchipelago.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
@@ -29,7 +30,12 @@ namespace Celeste.Mod.CelesteArchipelago
         private readonly float leftPadding;
         private readonly float bottomPadding;
 
+        private DateTime? lastReceivedMessage;
+        private static readonly TimeSpan messagePreviewDuration = TimeSpan.FromSeconds(5);
         private RectangleF bounds;
+
+        private long snapshotGT;
+        private int scrollIndex;
 
         public ChatHandler(Game game) : base(game)
         {
@@ -61,6 +67,7 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 lock (Log)
                 {
+                    lastReceivedMessage = DateTime.Now;
                     Log.Add(new ChatLine(message));
                 }
             }
@@ -72,6 +79,7 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 lock (Log)
                 {
+                    lastReceivedMessage = DateTime.Now;
                     Log.Add(new ChatLine(text, color));
                 }
             }
@@ -84,7 +92,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 RenderRectF(bounds, ChatBoxColor);
 
                 float yOffset = bottomPadding;
-                foreach (var line in Log.GetLog().Reverse())
+                foreach (var line in Log.GetLog().Reverse().Skip(scrollIndex))
                 {
 
                     float scalingFactor = targetTextHeight / line.MaxTextHeight;
@@ -110,24 +118,27 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public override void Draw(GameTime gameTime)
         {
+            if (!Enabled) return;
+
             var previousState = keyboardState;
             keyboardState = Keyboard.GetState();
 
-            if (keyboardState.IsKeyDown(Keys.T) && previousState.IsKeyUp(Keys.T))
-            {
-                isVisible = !isVisible;
-            }
+            var isToggled = HandleKeyboard(previousState, keyboardState);
+            var hasRecentMessage = lastReceivedMessage.HasValue && (DateTime.Now - lastReceivedMessage.Value) < messagePreviewDuration;
 
-            bounds.Width += (int)keyboardState[Keys.NumPad6] * 3;
-            bounds.Width -= (int)keyboardState[Keys.NumPad4] * 3;
-            bounds.Height += (int)keyboardState[Keys.NumPad8] * 3;
-            bounds.Height -= (int)keyboardState[Keys.NumPad2] * 3;
+            if (!isToggled && !hasRecentMessage) return;
 
-            if (!isVisible) return;
-            
+            HandleScrolling(previousState, keyboardState);
+
             var sb = Monocle.Draw.SpriteBatch;
-            var rs = new RasterizerState() { CullMode = CullMode.None,ScissorTestEnable = true };
-            sb.GraphicsDevice.ScissorRectangle = RoundRectangle(bounds);
+
+            sb.Begin();
+            CelesteNetClientFont.Draw(scrollIndex.ToString(), Vector2.One, Vector2.One, Color.White);
+            sb.End();
+
+            var rs = new RasterizerState() { CullMode = CullMode.None, ScissorTestEnable = true };
+            var rect = bounds.Round();
+            sb.GraphicsDevice.ScissorRectangle = rect;
             sb.Begin(
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
@@ -137,27 +148,45 @@ namespace Celeste.Mod.CelesteArchipelago
                 null,
                 Matrix.Identity
             );
-            
-            DrawDebug();
+
             Render(gameTime);
             
             sb.End();
         }
 
+        private void HandleScrolling(KeyboardState previousState, KeyboardState currentState)
+        {
+            if (currentState.IsKeyDown(Keys.NumPad8) && previousState.IsKeyUp(Keys.NumPad8))
+            {
+                if (scrollIndex < Log.Length() - 1)
+                {
+                    scrollIndex++;
+                }
+            }
+
+            if (currentState.IsKeyDown(Keys.NumPad2) && previousState.IsKeyUp(Keys.NumPad2))
+            {
+                if (scrollIndex > 0)
+                {
+                    scrollIndex--;
+                }
+            }
+        }
+
+        private bool HandleKeyboard(KeyboardState previousState, KeyboardState currentState)
+        {
+
+            if (currentState.IsKeyDown(Keys.T) && previousState.IsKeyUp(Keys.T))
+            {
+                isVisible = !isVisible;
+            }
+
+            return isVisible;
+        }
+
         private void RenderRectF(RectangleF rect, Color color)
         {
             Monocle.Draw.Rect(rect.X, rect.Y, rect.Width, rect.Height, color);
-        }
-
-        private static Rectangle RoundRectangle(RectangleF rectF) => new(
-            (int)Math.Round(rectF.X), 
-            (int)Math.Round(rectF.Y),
-            (int)Math.Round(rectF.Width), 
-            (int)Math.Round(rectF.Height));
-
-        private void DrawDebug()
-        {
-            CelesteNetClientFont.Draw($"X:{bounds.X} Y:{bounds.Y} W:{bounds.Width} H:{bounds.Height}", new(10, 10), Color.White);
         }
 
         private string parseText(string text, float scalingFactor)

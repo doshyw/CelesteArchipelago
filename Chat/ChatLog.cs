@@ -35,5 +35,10 @@ namespace Celeste.Mod.CelesteArchipelago
             DateTime now = DateTime.Now;
             return log.Reverse<ChatLine>().TakeWhile(line => WithinTimeout(now, line.createdTime, timeout));
         }
+
+        public int Length()
+        {
+            return log.Count;
+        }
     }
 }
