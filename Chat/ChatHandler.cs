@@ -21,7 +21,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public ChatLog Log = new ChatLog();
 
-        private bool isVisible = false;
+        private bool isToggled = false;
         private KeyboardState keyboardState;
 
         private int screenHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -122,18 +122,17 @@ namespace Celeste.Mod.CelesteArchipelago
 
             var previousState = keyboardState;
             keyboardState = Keyboard.GetState();
+            HandleKeyDown(previousState, keyboardState);
 
-            var isToggled = HandleKeyboard(previousState, keyboardState);
             var hasRecentMessage = lastReceivedMessage.HasValue && (DateTime.Now - lastReceivedMessage.Value) < messagePreviewDuration;
 
-            if (!isToggled && !hasRecentMessage) return;
-
-            HandleScrolling(previousState, keyboardState);
+            if (!(isToggled || hasRecentMessage)) return;
 
             var sb = Monocle.Draw.SpriteBatch;
 
             sb.Begin();
-            CelesteNetClientFont.Draw(scrollIndex.ToString(), Vector2.One, Vector2.One, Color.White);
+            var asWord = string.Join(";", keyboardState.GetPressedKeys().Select(x => x.ToString()));
+            CelesteNetClientFont.Draw(asWord, Vector2.One, Vector2.One, Color.White);
             sb.End();
 
             var rs = new RasterizerState() { CullMode = CullMode.None, ScissorTestEnable = true };
@@ -154,34 +153,32 @@ namespace Celeste.Mod.CelesteArchipelago
             sb.End();
         }
 
-        private void HandleScrolling(KeyboardState previousState, KeyboardState currentState)
+        private void HandleKeyDown(KeyboardState previousState, KeyboardState currentState)
         {
-            if (currentState.IsKeyDown(Keys.NumPad8) && previousState.IsKeyUp(Keys.NumPad8))
+            foreach (var key in currentState.GetPressedKeys())
             {
-                if (scrollIndex < Log.Length() - 1)
+                if (!currentState.IsKeyDown(key) || !previousState.IsKeyUp(key)) continue;
+
+                if (key == Keys.NumPad8)
                 {
-                    scrollIndex++;
+                    if (scrollIndex < Log.Length() - 1)
+                    {
+                        scrollIndex++;
+                    }
+                }
+                if (key == Keys.NumPad2)
+                {
+                    if (scrollIndex > 0)
+                    {
+                        scrollIndex--;
+                    }
+                }
+                if (key == Keys.T)
+                {
+                    isToggled = !isToggled;
                 }
             }
-
-            if (currentState.IsKeyDown(Keys.NumPad2) && previousState.IsKeyUp(Keys.NumPad2))
-            {
-                if (scrollIndex > 0)
-                {
-                    scrollIndex--;
-                }
-            }
-        }
-
-        private bool HandleKeyboard(KeyboardState previousState, KeyboardState currentState)
-        {
-
-            if (currentState.IsKeyDown(Keys.T) && previousState.IsKeyUp(Keys.T))
-            {
-                isVisible = !isVisible;
-            }
-
-            return isVisible;
+            
         }
 
         private void RenderRectF(RectangleF rect, Color color)
