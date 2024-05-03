@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Drawing;
 using System.Linq;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -123,24 +125,35 @@ namespace Celeste.Mod.CelesteArchipelago
 
             if (!isVisible) return;
             
-            Monocle.Draw.SpriteBatch.Begin(
+            var sb = Monocle.Draw.SpriteBatch;
+            var rs = new RasterizerState() { CullMode = CullMode.None,ScissorTestEnable = true };
+            sb.GraphicsDevice.ScissorRectangle = RoundRectangle(bounds);
+            sb.Begin(
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
                 SamplerState.LinearClamp,
                 DepthStencilState.None,
-                RasterizerState.CullNone,
+                rs,
                 null,
                 Matrix.Identity
             );
+            
             DrawDebug();
             Render(gameTime);
-            Monocle.Draw.SpriteBatch.End();
+            
+            sb.End();
         }
 
         private void RenderRectF(RectangleF rect, Color color)
         {
             Monocle.Draw.Rect(rect.X, rect.Y, rect.Width, rect.Height, color);
         }
+
+        private static Rectangle RoundRectangle(RectangleF rectF) => new(
+            (int)Math.Round(rectF.X), 
+            (int)Math.Round(rectF.Y),
+            (int)Math.Round(rectF.Width), 
+            (int)Math.Round(rectF.Height));
 
         private void DrawDebug()
         {
