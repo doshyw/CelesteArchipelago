@@ -16,6 +16,7 @@ namespace Celeste.Mod.CelesteArchipelago {
         public ButtonBinding ScrollChatUp { get; set; }
         [DefaultButtonBinding(Buttons.RightThumbstickDown, Keys.Z)]
         public ButtonBinding ScrollChatDown { get; set; }
-
+        [DefaultButtonBinding(Buttons.LeftTrigger, Keys.F1)]
+        public ButtonBinding AddMessages { get; set; }
     }
 }
