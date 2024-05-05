@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Celeste.Mod.CelesteArchipelago.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -21,30 +20,26 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public ChatLog Log = new ChatLog();
 
-        private bool isToggled = false;
-        private KeyboardState keyboardState;
+        private Rectangle ViewPort => Game.GraphicsDevice.Viewport.Bounds;
+        private float targetTextHeight => ViewPort.Height * TextHeightProportion;
+        private float leftPadding => ViewPort.Height * TextHeightProportion;
+        private float bottomPadding => ViewPort.Height * TextHeightProportion;
 
-        private int screenHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        private int screenWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        private float targetTextHeight => screenHeight * TextHeightProportion;
-        private readonly float leftPadding;
-        private readonly float bottomPadding;
-
+        private int scrollIndex;
+        private bool isToggled;
         private DateTime? lastReceivedMessage;
         private static readonly TimeSpan messagePreviewDuration = TimeSpan.FromSeconds(5);
-        private RectangleF bounds;
-
-        private long snapshotGT;
-        private int scrollIndex;
+        private bool isVisible =>
+            isToggled || lastReceivedMessage.HasValue &&
+            (DateTime.Now - lastReceivedMessage.Value) < messagePreviewDuration;
+        private RectangleF bounds => new RectangleF(
+            leftPadding,
+            ViewPort.Height + ViewPort.X - (ViewPort.Height * 0.3f), 
+            (ViewPort.Width * 0.4f), 
+            (ViewPort.Height * 0.3f));
 
         public ChatHandler(Game game) : base(game)
         {
-            leftPadding = screenHeight * TextHeightProportion;
-            bottomPadding = screenHeight * TextHeightProportion;
-            var boundsHeight = screenHeight * 0.3f;
-            var boundsWidth = screenWidth * 0.4f;
-            bounds = new RectangleF(leftPadding, screenHeight - boundsHeight - bottomPadding, boundsWidth, boundsHeight);
-
             UpdateOrder = 10000;
             DrawOrder = 10000;
             Enabled = false;
@@ -85,7 +80,7 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
-        void Render(GameTime gameTime)
+        private void Render()
         {
             lock(Log)
             {
@@ -99,7 +94,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
                     foreach (var element in line.Elements)
                     {
-                        var parsedText = parseText(element.text, scalingFactor);
+                        var parsedText = ParseText(element.text, scalingFactor);
                         var lineCount = parsedText.Count(x => x == '\n');
                         yOffset += lineCount * line.MaxTextHeight * scalingFactor;
                         var position = new Vector2(leftPadding, bounds.Bottom - yOffset);
@@ -116,23 +111,21 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            HandleInputs();
+            base.Update(gameTime);
+        }
+
         public override void Draw(GameTime gameTime)
         {
-            if (!Enabled) return;
-
-            var previousState = keyboardState;
-            keyboardState = Keyboard.GetState();
-            HandleKeyDown(previousState, keyboardState);
-
-            var hasRecentMessage = lastReceivedMessage.HasValue && (DateTime.Now - lastReceivedMessage.Value) < messagePreviewDuration;
-
-            if (!(isToggled || hasRecentMessage)) return;
+            if (!Enabled || !isVisible) return;
 
             var sb = Monocle.Draw.SpriteBatch;
 
             sb.Begin();
-            var asWord = string.Join(";", keyboardState.GetPressedKeys().Select(x => x.ToString()));
-            CelesteNetClientFont.Draw(asWord, Vector2.One, Vector2.One, Color.White);
+            Monocle.Draw.Rect(0, 0, ViewPort.Width, ViewPort.Height, Color.Aqua * 0.3f);
+            ;
             sb.End();
 
             var rs = new RasterizerState() { CullMode = CullMode.None, ScissorTestEnable = true };
@@ -148,34 +141,31 @@ namespace Celeste.Mod.CelesteArchipelago
                 Matrix.Identity
             );
 
-            Render(gameTime);
+            Render();
             
             sb.End();
         }
 
-        private void HandleKeyDown(KeyboardState previousState, KeyboardState currentState)
+        private void HandleInputs()
         {
-            foreach (var key in currentState.GetPressedKeys())
+            var settings = CelesteArchipelagoModule.Settings;
+            
+            if (settings.ToggleChat.Pressed)
             {
-                if (!currentState.IsKeyDown(key) || !previousState.IsKeyUp(key)) continue;
-
-                if (key == Keys.NumPad8)
+                isToggled = !isToggled;
+            }
+            if (settings.ScrollChatUp.Check)
+            {
+                if (scrollIndex < Log.Length() - 1)
                 {
-                    if (scrollIndex < Log.Length() - 1)
-                    {
-                        scrollIndex++;
-                    }
+                    scrollIndex++;
                 }
-                if (key == Keys.NumPad2)
+            }
+            if (settings.ScrollChatDown.Check)
+            {
+                if (scrollIndex > 0)
                 {
-                    if (scrollIndex > 0)
-                    {
-                        scrollIndex--;
-                    }
-                }
-                if (key == Keys.T)
-                {
-                    isToggled = !isToggled;
+                    scrollIndex--;
                 }
             }
             
@@ -186,7 +176,7 @@ namespace Celeste.Mod.CelesteArchipelago
             Monocle.Draw.Rect(rect.X, rect.Y, rect.Width, rect.Height, color);
         }
 
-        private string parseText(string text, float scalingFactor)
+        private string ParseText(string text, float scalingFactor)
         {
             string line = string.Empty;
             string returnString = string.Empty;
