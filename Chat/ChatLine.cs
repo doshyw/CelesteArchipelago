@@ -20,13 +20,16 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             get
             {
-                ChatLineElement[] arr = new ChatLineElement[6];
+                ChatLineElement[] arr = new ChatLineElement[9];
                 arr[0] = new ChatLineElement("I ", Color.Red);
                 arr[1] = new ChatLineElement("am ", Color.Orange);
                 arr[2] = new ChatLineElement("running ", Color.Yellow);
                 arr[3] = new ChatLineElement("a ", Color.Green);
                 arr[4] = new ChatLineElement("small ", Color.Blue);
-                arr[5] = new ChatLineElement("test.", Color.Purple);
+                arr[5] = new ChatLineElement("test. ", Color.Purple);
+                arr[6] = new ChatLineElement("test. ", Color.Purple);
+                arr[7] = new ChatLineElement("test. ", Color.Purple);
+                arr[8] = new ChatLineElement("test.", Color.Purple);
                 return new ChatLine(arr);
             }
         }

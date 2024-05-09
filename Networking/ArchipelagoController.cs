@@ -99,6 +99,10 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             Enabled = true;
             ChatHandler.Init();
+            for (int i = 0; i < 10; i++)
+            {
+                ChatHandler.HandleMessage("Hello, my name is tester testington, and I am a message!", Color.White);
+            }
         }
 
         public override void Update(GameTime gameTime)
