@@ -153,13 +153,18 @@ namespace Celeste.Mod.CelesteArchipelago
                     var fullString = string.Join(" ", message.Elements.Select(x => x.text));
                     int lc = LimitLineLength(fullString, scalingFactor, TextDrawArea.Width).Count(x => x == '\n') + 1;
                     cursor.StartMessage(lc * CelesteNetClientFont.LineHeight * scalingFactor);
-
+                    CelesteNetClientFont.Draw(lc.ToString(), new Vector2(cursor.Location.X + 500, cursor.Location.Y),
+                        Color.White);
                     foreach (var element in message.Elements)
                     {
                         cursor.Type(element.text, element.color);
                     }
                 }
-                
+
+                CelesteNetClientFont.Draw($"{cursor.Location.Y}; {cursor.Location.X}", new(0, -400), Color.White);
+                CelesteNetClientFont.Draw($"{CelesteNetClientFont.LineHeight * scalingFactor}", new(0, -300),
+                    Color.White);
+
                 var textHiddenAbove = Math.Max(-cursor.Y, 0);
 
                 CelesteNetClientFont.Draw($"{cursor.Y}; {cursor.TotalTextHeight}; {textHiddenAbove}", new(0, -500), Color.White);
@@ -252,7 +257,7 @@ namespace Celeste.Mod.CelesteArchipelago
             public float Y => location.Y + yScrollOffset;
             public float TotalTextHeight => drawingArea.Bottom - location.Y;
             public bool IsScrollable => location.Y < 0;
-
+            public Vector2 Location => location;
             private Vector2 location = new();
             private readonly float scalingFactor;
             private readonly Vector2 scaler;
@@ -272,12 +277,14 @@ namespace Celeste.Mod.CelesteArchipelago
             public void Type(string text, Color color)
             {
                 string[] wordArray = text.Split(' ');
+                int tmpOffset = 0;
 
                 foreach (var word in wordArray)
                 {
                     var width = CelesteNetClientFont.Measure(word).X * scalingFactor;
                     if (location.X + width > drawingArea.Width)
                     {
+                        tmpOffset++;
                         Newline();
                     }
 
@@ -285,6 +292,8 @@ namespace Celeste.Mod.CelesteArchipelago
                     CelesteNetClientFont.Draw(word + ' ', position, Vector2.Zero, scaler, color);
                     location.X += width + CelesteNetClientFont.Measure(' ').X * scalingFactor;
                 }
+
+                location.Y -= tmpOffset * scalingFactor * CelesteNetClientFont.LineHeight;
             }
 
             public void StartMessage(float height)
