@@ -188,14 +188,6 @@ namespace Celeste.Mod.CelesteArchipelago
                 isToggled = !isToggled;
             }
 
-
-            if (settings.AddMessages.Pressed)
-            {
-                lastReceivedMessage = DateTime.Now;
-                scrollIndex = 0;
-                messages.Add(ChatLine.TestLine);
-            }
-
             if (!Enabled || !IsVisible) return;
 
             if (!isScrolledToTop && settings.ScrollChatUp.Pressed)
