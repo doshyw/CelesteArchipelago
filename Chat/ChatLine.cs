@@ -24,6 +24,9 @@ namespace Celeste.Mod.CelesteArchipelago
                     new("a ", Color.Green),
                     new("small ", Color.Blue),
                     new("test. ", Color.Purple),
+                    new("(", Color.Blue),
+                    new("Parantheses", Color.White),
+                    new(") ", Color.Blue),
                     new("But now I wish to be on multiple lines. ", Color.Yellow),
                     new("And here on the 2nd line I may drag on to the 3rd. Well now I should be", Color.White),
                 };

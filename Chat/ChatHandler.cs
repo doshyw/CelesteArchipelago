@@ -9,6 +9,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Monocle;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -240,8 +241,8 @@ namespace Celeste.Mod.CelesteArchipelago
 
             public void PrintMessage(ChatLine message)
             {
-                var timeStamp = message.createdTime.ToString("[HH:mm:ss]");
-                var fullString = timeStamp + "" + string.Join(" ", message.Elements.Select(x => x.text.Trim(' ')));
+                var timeStamp = message.createdTime.ToString("[HH:mm:ss]") + " ";
+                var fullString = timeStamp + string.Join(" ", message.Elements.Select(x => x.text.Trim(' ')));
                 var lc = CountLines(fullString, drawingArea.Width);
 
                 location.X = drawingArea.Left;
@@ -251,7 +252,8 @@ namespace Celeste.Mod.CelesteArchipelago
 
                 foreach (var element in message.Elements)
                 {
-                    var wordArray = element.text.Trim(' ').Split(' ');
+                    // Split on space but include it in the output, so "Hello " -> ["Hello", " "]
+                    var wordArray = Regex.Split(element.text, @"(?<=[ ])");
 
                     foreach (var word in wordArray)
                     {
@@ -274,8 +276,8 @@ namespace Celeste.Mod.CelesteArchipelago
                 }
 
                 var position = new Vector2(location.X, Y);
-                CelesteNetClientFont.Draw(word + ' ', position, Vector2.Zero, scaler, color);
-                location.X += width + CelesteNetClientFont.Measure(' ').X * scalingFactor;
+                CelesteNetClientFont.Draw(word, position, Vector2.Zero, scaler, color);
+                location.X += width;
 
                 return tmpOffset;
             }
