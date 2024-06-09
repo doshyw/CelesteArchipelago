@@ -153,7 +153,7 @@ namespace Celeste.Mod.CelesteArchipelago
                     cursor.PrintMessage(message);
                 }
 
-                var textHiddenAbove = Math.Max(-cursor.Y, 0);
+                var textHiddenAbove = Math.Max(-cursor.Top, 0);
 
                 // This prevents scrolling up without a scrollbar or when there's not enough text
                 isScrolledToTop = textHiddenAbove <= 0;
@@ -219,7 +219,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
         private class ScaledCursor
         {
-            public float Y => location.Y + yScrollOffset;
+            public float Top => location.Y + yScrollOffset;
             public float TotalTextHeight => drawingArea.Bottom - location.Y;
             public bool IsScrollable => location.Y < 0;
 
@@ -275,7 +275,7 @@ namespace Celeste.Mod.CelesteArchipelago
                     Newline();
                 }
 
-                var position = new Vector2(location.X, Y);
+                var position = new Vector2(location.X, Top);
                 CelesteNetClientFont.Draw(word, position, Vector2.Zero, scaler, color);
                 location.X += width;
 
