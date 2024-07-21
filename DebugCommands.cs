@@ -135,5 +135,41 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
+        [Command("dumpallscreens", "dumps a file containing collectable screens")]
+        private static void CmdDumpAllScreens(string filename = "allscreens.txt")
+        {
+            Logger.Log("CelesteArchipelago", "Running dumpallscreens");
+            try
+            {
+                string levelString, path;
+                List<string> lines = new List<string>();
+                using (var writer = new StreamWriter(filename))
+                {
+                    MapData mapData;
+                    for (int area = 0; area < AreaData.Areas.Count; area++)
+                    {
+                        for (int mode = 0; mode < AreaData.Areas[area].Mode.Count(); mode++)
+                        {
+                            levelString = $"0;{area};{mode};";
+                            mapData = AreaData.Areas[area].Mode[mode].MapData;
+                            path = AreaData.Areas[area].SID;
+                            foreach (var level in mapData.Levels)
+                            {
+                                lines.Add($"{levelString}{level.Name} : loadscreen {path} {level.Name} {mode}");
+                            }
+                        }
+                    }
+                    foreach (string line in lines)
+                    {
+                        writer.WriteLine(line);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Engine.Commands.Log(e.ToString());
+            }
+        }
+
     }
 }

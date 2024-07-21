@@ -188,11 +188,10 @@ namespace Celeste.Mod.CelesteArchipelago
             Logger.Log("CelesteArchipelago", $"Checking location {Session.Locations.GetLocationNameFromId(location.ID) ?? location.ID.ToString()}");
             Session.Locations.CompleteLocationChecks(location.ID);
 
-            bool isVictory = location.type == CollectableType.COMPLETION && (
-                location.area == 10 && location.mode == 0 && VictoryCondition == VictoryConditionOptions.CHAPTER_9_FAREWELL
-                || location.area == 9 && location.mode == 0 && VictoryCondition == VictoryConditionOptions.CHAPTER_8_CORE
-                || location.area == 7 && location.mode == 0 && VictoryCondition == VictoryConditionOptions.CHAPTER_7_SUMMIT
-            );
+            var goalLevel = ProgressionSystem.GetGoalLevel();
+            bool isVictory = location.type == CollectableType.COMPLETION
+                && location.area == goalLevel.ID
+                && location.mode == (int)goalLevel.Mode;
 
             if (isVictory)
             {

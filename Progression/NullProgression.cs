@@ -1,4 +1,6 @@
-﻿namespace Celeste.Mod.CelesteArchipelago
+﻿using System;
+
+namespace Celeste.Mod.CelesteArchipelago
 {
     public class NullProgression : IProgressionSystem
     {
@@ -43,6 +45,11 @@
 
         public void OnCollectedServer(AreaKey area, CollectableType collectable, EntityID? entity = null)
         {
+        }
+
+        public AreaKey GetGoalLevel()
+        {
+            throw new NotImplementedException();
         }
     }
 }
