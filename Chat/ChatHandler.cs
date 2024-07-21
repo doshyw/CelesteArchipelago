@@ -1,64 +1,68 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Monocle;
-using System;
+using System.Drawing;
+using System.Linq;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
+using Celeste.Mod.CelesteArchipelago.Graphics;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Monocle;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
     public class ChatHandler : DrawableGameComponent
     {
-        public ChatLog Log = new ChatLog();
+        private List<ChatLine> messages = new();
 
-        public float TextAlpha = 1f;
-        public float ChatBoxAlpha = 0.3f;
+        private const float TextHeightProportion = 0.03f;
+        private const float ScrollBarWidth = 12;
+        private const float MessageRightPadding = 5;
+        private const float MessageLeftPadding = 5;
+        private static readonly Color ThumbColor = Color.LightBlue;
+        private static readonly Color TimestampColor = Color.LightBlue;
+        private static readonly TimeSpan MessagePreviewDuration = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan MessageFadeDuration = TimeSpan.FromSeconds(1);
 
-        public Color TextColor = Color.White;
-        public Color ChatBoxColor = Color.Black;
+        private int scrollIndex;
+        private bool isScrolledToTop;
+        private bool isToggled;
+        private DateTime? lastReceivedMessage;
 
-        public float TextHeightProportion = 0.03f;
-
-        public TimeSpan messagePreviewTime = new TimeSpan(0, 0, 10);
-
-        private int screenHeight
+        private Rectangle ViewPort => GraphicsDevice.Viewport.Bounds;
+        private float TargetTextHeight => ViewPort.Height * TextHeightProportion;
+        private float XOffset => ViewPort.Height * TextHeightProportion;
+        private float YOffset => ViewPort.Height - (ViewPort.Height * 0.3f);
+        private TimeSpan TimeSinceLastMessage
         {
             get
             {
-                return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                if (lastReceivedMessage == null) return TimeSpan.MaxValue;
+                return DateTime.Now - lastReceivedMessage.Value;
             }
         }
-
-        private int screenWidth
-        {
+        private bool IsVisible =>
+            isToggled ||
+            TimeSinceLastMessage < MessagePreviewDuration;
+        private float Alpha {
             get
             {
-                return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                if (isToggled) return 1;
+                var timeRemaining = MessagePreviewDuration - TimeSinceLastMessage;
+                if (timeRemaining <= MessageFadeDuration)
+                {
+                    return Ease.CubeOut((float)timeRemaining.TotalSeconds);
+                }
+                return 1;
             }
         }
-
-        private float targetTextHeight
-        {
-            get
-            {
-                return screenHeight * TextHeightProportion;
-            }
-        }
-
-        private float windowOffset
-        {
-            get
-            {
-                return screenHeight * TextHeightProportion;
-            }
-        }
-
-        private float textBorderOffset
-        {
-            get
-            {
-                return 0.5f * screenHeight * TextHeightProportion;
-            }
-        }
+        private Color ChatBoxColor => Color.Black * 0.3f * Alpha;
+        private RectangleF Bounds => new RectangleF(0, 0, (ViewPort.Width * 0.4f), (ViewPort.Height * 0.3f) - XOffset);
+        private RectangleF TextDrawArea => new RectangleF(MessageLeftPadding, 0,
+            Bounds.Width - (MessageLeftPadding + ScrollBarWidth + MessageRightPadding),
+            Bounds.Height);
 
         public ChatHandler(Game game) : base(game)
         {
@@ -69,22 +73,26 @@ namespace Celeste.Mod.CelesteArchipelago
 
         public void Init()
         {
+            CelesteArchipelagoModule.Settings.ScrollChatDown.SetRepeat(0.15f);
+            CelesteArchipelagoModule.Settings.ScrollChatUp.SetRepeat(0.15f);
             Enabled = true;
         }
 
         public void DeInit()
         {
             Enabled = false;
-            Log = new ChatLog();
+            messages = new();
         }
 
         public void HandleMessage(LogMessage message)
         {
             if (Enabled)
             {
-                lock (Log)
+                lock (messages)
                 {
-                    Log.Add(new ChatLine(message));
+                    lastReceivedMessage = DateTime.Now;
+                    scrollIndex = 0;
+                    messages.Add(new ChatLine(message));
                 }
             }
         }
@@ -93,98 +101,215 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             if (Enabled)
             {
-                lock (Log)
+                lock (messages)
                 {
-                    Log.Add(new ChatLine(text, color));
+                    lastReceivedMessage = DateTime.Now;
+                    scrollIndex = 0;
+                    messages.Add(new ChatLine(text, color));
                 }
             }
         }
 
-        Vector4 RenderLine(Vector2 bottomLeft, ChatLine chatLine, float fadeAlpha)
+        public override void Update(GameTime gameTime)
         {
-            float scalingFactor = targetTextHeight / chatLine.MaxTextHeight;
-
-            float rectangleWidth = scalingFactor * (chatLine.TotalTextWidth + 2 * textBorderOffset);
-            float rectangleHeight = scalingFactor * (chatLine.MaxTextHeight + 2 * textBorderOffset);
-            RenderRect(
-                bottomLeft.X,
-                bottomLeft.Y - rectangleHeight,
-                rectangleWidth,
-                rectangleHeight,
-                ChatBoxColor * ChatBoxAlpha * fadeAlpha
-            );
-
-            Vector2 sizeText;
-            float wordOffset = bottomLeft.X + scalingFactor * textBorderOffset;
-            foreach (var element in chatLine.Elements)
-            {
-                sizeText = CelesteNetClientFont.Measure(element.text);
-                CelesteNetClientFont.Draw(
-                    element.text,
-                    new Vector2(wordOffset, bottomLeft.Y - scalingFactor * (sizeText.Y + textBorderOffset)),
-                    Vector2.Zero,
-                    Vector2.One * scalingFactor,
-                    element.color * TextAlpha * fadeAlpha
-                );
-                wordOffset += scalingFactor * sizeText.X;
-            }
-
-            return new Vector4(bottomLeft.X, bottomLeft.Y - rectangleHeight, rectangleWidth, rectangleHeight);
-
-        }
-
-        void Render(GameTime gameTime)
-        {
-            lock(Log)
-            {
-                DateTime now = DateTime.Now;
-
-                float yOffset = windowOffset;
-                float deltaToFade, fadeAlpha;
-                Vector4 previousBounds;
-                foreach (var line in Log.GetLogWithTimeout((float)messagePreviewTime.TotalSeconds))
-                {
-                    if ((now - line.createdTime).TotalSeconds > messagePreviewTime.TotalSeconds) continue;
-                    deltaToFade = (float)((now - line.createdTime).TotalSeconds - messagePreviewTime.TotalSeconds / 2f);
-                    if (deltaToFade <= 0)
-                    {
-                        fadeAlpha = 1;
-                    }
-                    else
-                    {
-                        fadeAlpha = 1f - Ease.CubeIn(deltaToFade);
-                    }
-                    previousBounds = RenderLine(new Vector2(windowOffset, screenHeight - yOffset), line, fadeAlpha);
-                    yOffset += previousBounds.W + 1;
-                }
-            }
+            HandleInputs();
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
-            Monocle.Draw.SpriteBatch.Begin(
+            if (!Enabled || !IsVisible) return;
+
+            var clipRect = new RectangleF(XOffset, YOffset, Bounds.Width, Bounds.Height).Round();
+            var sb = Monocle.Draw.SpriteBatch;
+
+            var rs = new RasterizerState() { CullMode = CullMode.None, ScissorTestEnable = true };
+            sb.GraphicsDevice.ScissorRectangle = clipRect;
+            sb.Begin(
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
                 SamplerState.LinearClamp,
                 DepthStencilState.None,
-                RasterizerState.CullNone,
+                rs,
                 null,
-                Matrix.Identity
+                Matrix.CreateTranslation(XOffset, YOffset, 0)
             );
-
-            Render(gameTime);
-
-            Monocle.Draw.SpriteBatch.End();
+            Render();
+            sb.End();
         }
 
-        private void RenderRect(float x, float y, float width, float height, Color color)
+        private void Render()
         {
-            int xi = (int)Math.Floor(x);
-            int yi = (int)Math.Floor(y);
-            int wi = (int)Math.Ceiling(x + width) - xi;
-            int hi = (int)Math.Ceiling(y + height) - yi;
+            lock (messages)
+            {
+                RenderRectF(Bounds, ChatBoxColor);
 
-            Monocle.Draw.Rect(xi, yi, wi, hi, color);
+                var scalingFactor = TargetTextHeight / CelesteNetClientFont.LineHeight;
+                var cursor = new ScaledCursor(scalingFactor, TextDrawArea);
+                cursor.SetVerticalScroll(scrollIndex);
+                
+                foreach (var message in messages.AsEnumerable().Reverse())
+                {
+                    cursor.PrintMessage(message);
+                }
+
+                var textHiddenAbove = Math.Max(-cursor.Top, 0);
+
+                // This prevents scrolling up without a scrollbar or when there's not enough text
+                isScrolledToTop = textHiddenAbove <= 0;
+                if (!cursor.IsScrollable) return;
+
+                var bgRect = new RectangleF(
+                    TextDrawArea.Right + MessageRightPadding,
+                    TextDrawArea.Top,
+                    ScrollBarWidth,
+                    TextDrawArea.Height
+                );
+                RenderRectF(bgRect, ChatBoxColor * 1.3f);
+
+                var thumbYOffset = (textHiddenAbove * bgRect.Height) / cursor.TotalTextHeight;
+                var thumbRect = new RectangleF(
+                    bgRect.X,
+                    bgRect.Y + thumbYOffset,
+                    bgRect.Width,
+                    (TextDrawArea.Height * bgRect.Height) / cursor.TotalTextHeight
+                );
+                RenderRectF(thumbRect, ThumbColor);
+
+            }
+        }
+
+        private void HandleInputs()
+        {
+            var settings = CelesteArchipelagoModule.Settings;
+            
+            if (settings.ToggleChat.Pressed)
+            {
+                isToggled = !isToggled;
+            }
+
+            if (!Enabled || !IsVisible) return;
+
+            if (!isScrolledToTop && settings.ScrollChatUp.Pressed)
+            {
+                scrollIndex++;
+            }
+
+            if (settings.ScrollChatDown.Pressed)
+            {
+                if (scrollIndex > 0)
+                {
+                    scrollIndex--;
+                }
+            }
+        }
+
+        private void RenderRectF(RectangleF rect, Color color)
+        {
+            Monocle.Draw.Rect(rect.X, rect.Y, rect.Width, rect.Height, color);
+        }
+
+        private class ScaledCursor
+        {
+            public float Top => location.Y + yScrollOffset;
+            public float TotalTextHeight => drawingArea.Bottom - location.Y;
+            public bool IsScrollable => location.Y < 0;
+
+            private Vector2 location = new();
+            private readonly float scalingFactor;
+            private readonly Vector2 scaler;
+            private readonly RectangleF drawingArea;
+            private float yScrollOffset = 0;
+
+            public ScaledCursor(float scalingFactor, RectangleF drawingArea)
+            {
+                this.scalingFactor = scalingFactor;
+                this.drawingArea = drawingArea;
+                scaler = Vector2.One * scalingFactor;
+                
+                location.X = drawingArea.Left;
+                location.Y = drawingArea.Bottom;
+            }
+
+            public void PrintMessage(ChatLine message)
+            {
+                var timeStamp = message.createdTime.ToString("[HH:mm:ss]") + " ";
+                var fullString = timeStamp + string.Join(" ", message.Elements.Select(x => x.text.Trim(' ')));
+                var lc = CountLines(fullString, drawingArea.Width);
+
+                location.X = drawingArea.Left;
+                Up(lc);
+
+                var tmpOffset = PrintWord(timeStamp, TimestampColor);
+
+                foreach (var element in message.Elements)
+                {
+                    // Split on space but include it in the output, so "Hello " -> ["Hello", " "]
+                    var wordArray = Regex.Split(element.text, @"(?<=[ ])");
+
+                    foreach (var word in wordArray)
+                    {
+                        tmpOffset += PrintWord(word, element.color);
+                    }
+                }
+
+                Up(tmpOffset);
+            }
+
+            private int PrintWord(string word, Color color)
+            {
+                var tmpOffset = 0;
+                
+                var width = CelesteNetClientFont.Measure(word).X * scalingFactor;
+                if (location.X + width > drawingArea.Width)
+                {
+                    tmpOffset++;
+                    Newline();
+                }
+
+                var position = new Vector2(location.X, Top);
+                CelesteNetClientFont.Draw(word, position, Vector2.Zero, scaler, color);
+                location.X += width;
+
+                return tmpOffset;
+            }
+
+            private void Newline()
+            {
+                location.X = drawingArea.Left;
+                location.Y += CelesteNetClientFont.LineHeight * scalingFactor;
+            }
+
+            private void Up(int lineCount)
+            {
+                location.Y -= lineCount * CelesteNetClientFont.LineHeight * scalingFactor;
+            }
+
+            public void SetVerticalScroll(int lineCount)
+            {
+                yScrollOffset = lineCount * scalingFactor * CelesteNetClientFont.LineHeight;
+            }
+            private int CountLines(string text, float width)
+            {
+                var line = string.Empty;
+                var returnString = string.Empty;
+                var wordArray = text.Split(' ');
+                var lineCount = 1;
+
+                foreach (var word in wordArray)
+                {
+                    if (CelesteNetClientFont.Measure(line + word).X > width * (1 / scalingFactor))
+                    {
+                        returnString = returnString + line + '\n';
+                        line = string.Empty;
+                        lineCount++;
+                    }
+
+                    line = line + word + ' ';
+                }
+                
+                return lineCount;
+            }
         }
     }
 }

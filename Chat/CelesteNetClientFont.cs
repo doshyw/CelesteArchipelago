@@ -53,6 +53,9 @@ namespace Celeste.Mod.CelesteArchipelago
         public static void Draw(string text, Vector2 position, Vector2 justify, Vector2 scale, Color color)
             => Draw(text, position, justify, scale, color, 0f, Color.Transparent, 0f, Color.Transparent);
 
+        public static void Draw(string text, Vector2 position, Vector2 scale, Color color)
+            => Draw(text, position, Vector2.Zero, scale, color, 0f, Color.Transparent, 0f, Color.Transparent);
+
         public static void DrawOutline(string text, Vector2 position, Vector2 justify, Vector2 scale, Color color, float stroke, Color strokeColor)
             => Draw(text, position, justify, scale, color, 0f, Color.Transparent, stroke, strokeColor);
 

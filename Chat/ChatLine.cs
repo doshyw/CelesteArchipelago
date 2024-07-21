@@ -10,69 +10,40 @@ namespace Celeste.Mod.CelesteArchipelago
     {
         public ChatLineElement[] Elements;
 
-        public DateTime createdTime;
-
-        public float MaxTextHeight;
-
-        public float TotalTextWidth;
+        public DateTime createdTime = DateTime.Now;
 
         public static ChatLine TestLine
         {
             get
             {
-                ChatLineElement[] arr = new ChatLineElement[6];
-                arr[0] = new ChatLineElement("I ", Color.Red);
-                arr[1] = new ChatLineElement("am ", Color.Orange);
-                arr[2] = new ChatLineElement("running ", Color.Yellow);
-                arr[3] = new ChatLineElement("a ", Color.Green);
-                arr[4] = new ChatLineElement("small ", Color.Blue);
-                arr[5] = new ChatLineElement("test.", Color.Purple);
-                return new ChatLine(arr);
+                var arr = new ChatLineElement[]
+                {
+                    new("I ", Color.Red),
+                    new("am ", Color.Orange),
+                    new("running ", Color.Yellow),
+                    new("a ", Color.Green),
+                    new("small ", Color.Blue),
+                    new("test. ", Color.Purple),
+                    new("(", Color.Blue),
+                    new("Parantheses", Color.White),
+                    new(") ", Color.Blue),
+                    new("But now I wish to be on multiple lines. ", Color.Yellow),
+                    new("And here on the 2nd line I may drag on to the 3rd. Well now I should be", Color.White),
+                };
+                return new(arr);
             }
         }
 
-        public ChatLine(string text, Color color)
+        public ChatLine(string text, Color color) : this(new[] { new ChatLineElement(text, color) })
         {
-            Elements = new ChatLineElement[1];
-            Elements[0] = new ChatLineElement(text, color);
-
-            Vector2 measure = CelesteNetClientFont.Measure(text);
-            TotalTextWidth = measure.X;
-            MaxTextHeight = measure.Y;
-
-            createdTime = DateTime.Now;
-        }
-
-        public ChatLine(string text, Color color, DateTime createdTime)
-        {
-            Elements = new ChatLineElement[1];
-            Elements[0] = new ChatLineElement(text, color);
-
-            Vector2 measure = CelesteNetClientFont.Measure(text);
-            TotalTextWidth = measure.X;
-            MaxTextHeight = measure.Y;
-
-            this.createdTime = createdTime;
         }
 
         public ChatLine(ChatLineElement[] elements)
         {
-            TotalTextWidth = 0;
-            MaxTextHeight = 0;
-            int count = elements.Length;
-            Vector2 measure;
             Elements = elements;
-            for (int i = 0; i < count; i++)
-            {
-                measure = CelesteNetClientFont.Measure(Elements[i].text);
-                TotalTextWidth += measure.X;
-                if (measure.Y > MaxTextHeight) MaxTextHeight = measure.Y;
-            }
-
-            createdTime = DateTime.Now;
         }
 
-        public ChatLine(LogMessage msg) : this(msg.Parts.Select(part => new ChatLineElement(part.Text, part.Color)).ToArray())
+        public ChatLine(LogMessage msg) : this(msg.Parts.Select(part => new ChatLineElement(part)).ToArray())
         {
         }
 
@@ -88,11 +59,10 @@ namespace Celeste.Mod.CelesteArchipelago
             this.text = text;
             this.color = color;
         }
-
-        public ChatLineElement(string text, Archipelago.MultiClient.Net.Models.Color color)
+        public ChatLineElement(MessagePart part)
         {
-            this.text = text;
-            this.color = new Color(color.R, color.G, color.B);
+            text = part.Text;
+            color = new Color(part.Color.R, part.Color.G, part.Color.B);
         }
 
     }
