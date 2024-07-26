@@ -162,9 +162,7 @@ namespace Celeste.Mod.CelesteArchipelago
             if (Session.Socket.Connected)
             {
                 Logger.Log("CelesteArchipelago", "Disconnecting socket.");
-                var rawSocket = DynamicData.For(Session.Socket).Get<ClientWebSocket>("webSocket");
-                rawSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "Close requested by client", CancellationToken.None).Wait();
-                DynamicData.For(Session.Socket).Invoke("OnSocketClosed");
+                Session.Socket.DisconnectAsync().GetAwaiter().GetResult();
             }
             base.Dispose(disposing);
         }

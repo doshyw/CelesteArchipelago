@@ -130,7 +130,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 port:     CelesteArchipelagoModule.Settings.Port,
                 name:     CelesteArchipelagoModule.Settings.Name,
                 flags:    ItemsHandlingFlags.AllItems,
-                version:  new Version(0, 4, 3),
+                version:  new Version(0, 5, 0),
                 tags:     null,
                 uuid:     null,
                 password: CelesteArchipelagoModule.Settings.Password,
