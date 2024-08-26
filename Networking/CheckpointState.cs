@@ -20,7 +20,7 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
         private static List<CheckpointItem> Checkpoints;
-        private DataStorageHelper helper;
+        private IDataStorageHelper helper;
 
         private static void InitCheckpoints()
         {
@@ -45,7 +45,7 @@ namespace Celeste.Mod.CelesteArchipelago
             return Checkpoints.FindIndex((x) => x.Area == area && x.Level == level);
         }
 
-        public CheckpointState(ulong current, DataStorageHelper helper)
+        public CheckpointState(ulong current, IDataStorageHelper helper)
         {
             runningTotal = current;
             if(Checkpoints is null)
