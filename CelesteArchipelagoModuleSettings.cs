@@ -9,6 +9,19 @@ namespace Celeste.Mod.CelesteArchipelago {
         public string Password { get; set; } = "";
         public string Server { get; set; } = "";
         public string Port { get; set; } = "38281";
+        private bool _Chat = false;
+        public bool Chat { 
+            get => _Chat; 
+            set {
+                _Chat = value;
+                if (value) {
+                    ArchipelagoController.Instance.Init();
+                } else {
+                    ArchipelagoController.Instance.DeInit();
+                }
+            } 
+        }
+
 
         [DefaultButtonBinding(Buttons.Back, Keys.T)]
         public ButtonBinding ToggleChat { get; set; }

@@ -101,6 +101,11 @@ namespace Celeste.Mod.CelesteArchipelago
             ChatHandler.Init();
         }
 
+        public void DeInit()
+        {
+            ChatHandler.DeInit();
+        }
+
         public override void Update(GameTime gameTime)
         {
 

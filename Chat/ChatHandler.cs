@@ -75,7 +75,9 @@ namespace Celeste.Mod.CelesteArchipelago
         {
             CelesteArchipelagoModule.Settings.ScrollChatDown.SetRepeat(0.15f);
             CelesteArchipelagoModule.Settings.ScrollChatUp.SetRepeat(0.15f);
-            Enabled = true;
+            if (CelesteArchipelagoModule.Settings.Chat == true){
+                Enabled = true;
+            }
         }
 
         public void DeInit()
