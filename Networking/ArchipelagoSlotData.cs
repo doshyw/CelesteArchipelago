@@ -23,7 +23,7 @@ namespace Celeste.Mod.CelesteArchipelago
             { "cassettes_required", typeof(ArchipelagoSlotData).GetProperty("CassettesRequired") },
             { "hearts_required", typeof(ArchipelagoSlotData).GetProperty("HeartsRequired") },
             { "levels_required", typeof(ArchipelagoSlotData).GetProperty("LevelsRequired") },
-            { "goal_level", typeof(ArchipelagoSlotData).GetProperty("VictoryCondition") },
+            { "victory_condition", typeof(ArchipelagoSlotData).GetProperty("VictoryCondition") },
             { "progression_system", typeof(ArchipelagoSlotData).GetProperty("ProgressionSystem") },
             { "disable_heart_gates", typeof(ArchipelagoSlotData).GetProperty("DisableHeartGates") },
         };
