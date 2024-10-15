@@ -179,6 +179,11 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 // Receive latest uncollected item
                 Logger.Log("CelesteArchipelago", $"Received item {receivedItemsHelper.PeekItem().ItemName} with ID {receivedItemsHelper.PeekItem().ItemId}");
+                if (receivedItemsHelper.PeekItem().ItemName == "Victory (Celeste)")
+                {
+                    receivedItemsHelper.DequeueItem();
+                    return;
+                }
                 var itemID = receivedItemsHelper.PeekItem().ItemId;
                 ArchipelagoNetworkItem item = new ArchipelagoNetworkItem(itemID);
 
