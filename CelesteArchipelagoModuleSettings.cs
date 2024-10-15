@@ -5,9 +5,11 @@ using System.Xml.Serialization;
 namespace Celeste.Mod.CelesteArchipelago {
     public class CelesteArchipelagoModuleSettings : EverestModuleSettings
     {
+        [SettingMaxLength(30)]
         public string Name { get; set; } = "Madeline";
         public string Password { get; set; } = "";
-        public string Server { get; set; } = "";
+        [SettingMaxLength(30)]
+        public string Server { get; set; } = "archipelago.gg";
         public string Port { get; set; } = "38281";
         private bool _Chat = false;
         public bool Chat { 
