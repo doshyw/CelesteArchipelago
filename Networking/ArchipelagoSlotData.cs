@@ -25,6 +25,7 @@ namespace Celeste.Mod.CelesteArchipelago
             { "levels_required", typeof(ArchipelagoSlotData).GetProperty("LevelsRequired") },
             { "victory_condition", typeof(ArchipelagoSlotData).GetProperty("VictoryCondition") },
             { "progression_system", typeof(ArchipelagoSlotData).GetProperty("ProgressionSystem") },
+            { "goal_level", typeof(ArchipelagoSlotData).GetProperty("VictoryCondition") },
             { "disable_heart_gates", typeof(ArchipelagoSlotData).GetProperty("DisableHeartGates") },
         };
 
