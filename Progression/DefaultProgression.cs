@@ -135,7 +135,7 @@ namespace Celeste.Mod.CelesteArchipelago
                     StrawberryCount += 1;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException($"CollectableType {collectable} not implemented.");
+                    throw new ArgumentOutOfRangeException($"CollectableType {area} {collectable} {entity} not implemented.");
             }
         }
 
