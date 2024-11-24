@@ -45,8 +45,8 @@ namespace Celeste.Mod.CelesteArchipelago
                 if (self.Follower.Leader != null)
                 {
                     Player obj = self.Follower.Leader.Entity as Player;
-                    // collectIndex = obj.StrawberryCollectIndex;
-                    // obj.StrawberryCollectIndex++;
+                    collectIndex = obj.StrawberryCollectIndex;
+                    obj.StrawberryCollectIndex++;
                     obj.StrawberryCollectResetTimer = 2.5f;
                     self.Follower.Leader.LoseFollower(self.Follower);
                 }
