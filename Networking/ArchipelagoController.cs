@@ -81,6 +81,7 @@ namespace Celeste.Mod.CelesteArchipelago
             new PatchedOuiJournal(),
             new PatchedSaveData(),
             new PatchedStrawberry(),
+            new PatchedBerryCounter(),
         };
 
         public ArchipelagoController(Game game) : base(game)
