@@ -58,7 +58,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 ArchipelagoController.Instance.ProgressionSystem.OnCollectedClient(SaveData.Instance.CurrentSession_Safe.Area, CollectableType.STRAWBERRY, self.ID); // NEW
                 Session session = (self.Scene as Level).Session;
                 session.DoNotLoad.Add(self.ID);
-                // session.Strawberries.Add(self.ID);
+                session.Strawberries.Add(self.ID);
                 session.UpdateLevelStartDashes();
                 self.Add(new Coroutine(strawberry.Invoke<IEnumerator>("CollectRoutine", collectIndex)));
             }
