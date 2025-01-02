@@ -3,6 +3,9 @@ using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Archipelago.MultiClient.Net.Packets;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using Archipelago.MultiClient.Net.MessageLog.Parts;
+
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -62,6 +65,10 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
+        public DeathLinkService DeathLinkService { get; private set; }
+        public DeathLinkStatus DeathLinkStatus { get; set; } = DeathLinkStatus.None;
+        public bool isLocalDeath = true;
+        private long DeathAmnesityCount = 0;
         private ChatHandler ChatHandler { get; set; }
         private Connection Connection { get; set; }
         private VictoryConditionOptions VictoryCondition
@@ -80,6 +87,7 @@ namespace Celeste.Mod.CelesteArchipelago
             new PatchedOuiMainMenu(),
             new PatchedOuiJournal(),
             new PatchedSaveData(),
+            new PatchedPlayer(),
             new PatchedStrawberry(),
             new PatchedBerryCounter(),
         };
@@ -154,6 +162,20 @@ namespace Celeste.Mod.CelesteArchipelago
                     Session.DataStorage[Scope.Slot, "CelestePlayState"].Initialize("1;0;0;dotutorial");
                     Session.DataStorage[Scope.Slot, "CelesteCheckpointState"].Initialize(long.MinValue);
 
+                    //CelesteArchipelagoModule.Settings.DeathLink = Instance.SlotData.DeathLink; // Bug: Cannot get DeathLink Data from user
+                    DeathLinkService = Session.CreateDeathLinkService();
+                    DeathLinkService.OnDeathLinkReceived += ReceiveDeathLinkCallback;
+                    
+
+                    if (CelesteArchipelagoModule.Settings.DeathLink)
+                    {
+                        DeathLinkService.EnableDeathLink();
+                    }
+                    else
+                    {
+                        DeathLinkService.DisableDeathLink();
+                    }
+
                     Connection.Disposed += (sender, args) =>
                     {
                         Session.MessageLog.OnMessageReceived -= HandleMessage;
@@ -224,6 +246,48 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
+        public void ReceiveDeathLinkCallback(DeathLink deathLink)
+        {
+            string completeMessage;
+            if (string.IsNullOrEmpty(deathLink.Cause))
+            {
+                completeMessage = $"DeathLink from {deathLink.Source}: {deathLink.Source} died";
+            }
+            else
+            {
+                completeMessage = $"DeathLink from {deathLink.Source}: {deathLink.Cause}";
+            }
+
+            ChatHandler.HandleMessage(completeMessage, Color.PaleVioletRed);
+
+            if (DeathLinkStatus == DeathLinkStatus.None && CelesteArchipelagoModule.Settings.DeathLink)
+            {
+                // wait for Madeline to die
+                DeathLinkStatus = DeathLinkStatus.Pending;
+                isLocalDeath = false;
+            }
+        }
+
+        public void SendDeathLinkCallback()
+        {
+            if (!CelesteArchipelagoModule.Settings.DeathLink)
+            {
+                return;
+            }
+
+            if (DeathLinkStatus == DeathLinkStatus.None && DeathAmnesityCount >= Instance.SlotData.DeathAmnestyMax - 1)
+            {
+                var deathLink = new DeathLink(Session.Players.GetPlayerAlias(Session.ConnectionInfo.Slot), "Celeste");
+                DeathLinkService.SendDeathLink(deathLink);
+
+                DeathAmnesityCount = 0;
+            }
+            else if (isLocalDeath)
+            {
+                DeathAmnesityCount++;
+            }
+        }
+
         public void HandleMessage(LogMessage message)
         {
             if (!BlockMessages) ChatHandler.HandleMessage(message);
@@ -240,6 +304,5 @@ namespace Celeste.Mod.CelesteArchipelago
             ChatHandler?.Dispose();
             base.Dispose(disposing);
         }
-
     }
 }
