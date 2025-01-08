@@ -68,7 +68,7 @@ namespace Celeste.Mod.CelesteArchipelago
         public DeathLinkService DeathLinkService { get; private set; }
         public DeathLinkStatus DeathLinkStatus { get; set; } = DeathLinkStatus.None;
         public bool isLocalDeath = true;
-        private long DeathAmnesityCount = 0;
+        private long DeathAmnestyCount = 0;
         private ChatHandler ChatHandler { get; set; }
         private Connection Connection { get; set; }
         private VictoryConditionOptions VictoryCondition
@@ -181,6 +181,7 @@ namespace Celeste.Mod.CelesteArchipelago
                         Session.MessageLog.OnMessageReceived -= HandleMessage;
                         Session.Items.ItemReceived -= ReceiveItemCallback;
                         ProgressionSystem = new NullProgression();
+                        DeathLinkService = null;
                     };
                 }
                 else
@@ -275,16 +276,16 @@ namespace Celeste.Mod.CelesteArchipelago
                 return;
             }
 
-            if (DeathLinkStatus == DeathLinkStatus.None && DeathAmnesityCount >= Instance.SlotData.DeathAmnestyMax - 1)
+            if (DeathLinkStatus == DeathLinkStatus.None && DeathAmnestyCount >= Instance.SlotData.DeathAmnestyMax - 1)
             {
                 var deathLink = new DeathLink(Session.Players.GetPlayerAlias(Session.ConnectionInfo.Slot), "Celeste");
                 DeathLinkService.SendDeathLink(deathLink);
 
-                DeathAmnesityCount = 0;
+                DeathAmnestyCount = 0;
             }
             else if (isLocalDeath)
             {
-                DeathAmnesityCount++;
+                DeathAmnestyCount++;
             }
         }
 
