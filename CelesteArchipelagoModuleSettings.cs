@@ -11,16 +11,16 @@ namespace Celeste.Mod.CelesteArchipelago {
         [SettingMaxLength(30)]
         public string Server { get; set; } = "archipelago.gg";
         public string Port { get; set; } = "38281";
+        [SettingInGame(true)]
         public bool DeathLink
         {
             get => _deathLink;
             set
             {
                 
-                if (ArchipelagoController.Instance is not null &&
-                    ArchipelagoController.Instance.DeathLinkService is not null)
+                if (ArchipelagoController.Instance.DeathLinkService is not null)
                 {
-                    if (_deathLink) {
+                    if (!_deathLink) {
                         ArchipelagoController.Instance.DeathLinkService.EnableDeathLink();
                     }
                     else {
