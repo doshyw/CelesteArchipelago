@@ -278,6 +278,7 @@ namespace Celeste.Mod.CelesteArchipelago
 
             if (DeathLinkStatus == DeathLinkStatus.None && DeathAmnestyCount >= Instance.SlotData.DeathAmnestyMax - 1)
             {
+                ChatHandler.HandleMessage("Death Sent", Color.PaleVioletRed);
                 var deathLink = new DeathLink(Session.Players.GetPlayerAlias(Session.ConnectionInfo.Slot), "Celeste");
                 DeathLinkService.SendDeathLink(deathLink);
 
