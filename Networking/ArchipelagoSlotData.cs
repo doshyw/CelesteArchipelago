@@ -16,7 +16,7 @@ namespace Celeste.Mod.CelesteArchipelago
         public long VictoryCondition { get; set; } = 0;
         public long ProgressionSystem { get; set; } = 0;
         public long DisableHeartGates { get; set; } = 0;
-        public bool DeathLink { get; set; } = false;
+        public long DeathLink { get; set; } = 0;
         public long DeathAmnestyMax { get; set; } = 20;
 
         private Dictionary<string, PropertyInfo> keyPropertyMap = new Dictionary<string, PropertyInfo>

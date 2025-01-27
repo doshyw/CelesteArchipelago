@@ -162,7 +162,7 @@ namespace Celeste.Mod.CelesteArchipelago
                     Session.DataStorage[Scope.Slot, "CelestePlayState"].Initialize("1;0;0;dotutorial");
                     Session.DataStorage[Scope.Slot, "CelesteCheckpointState"].Initialize(long.MinValue);
 
-                    //CelesteArchipelagoModule.Settings.DeathLink = Instance.SlotData.DeathLink; // Bug: Cannot get DeathLink Data from user
+                    CelesteArchipelagoModule.Settings.DeathLink = SlotData.DeathLink == 1;
                     DeathLinkService = Session.CreateDeathLinkService();
                     DeathLinkService.OnDeathLinkReceived += ReceiveDeathLinkCallback;
                     
@@ -279,7 +279,7 @@ namespace Celeste.Mod.CelesteArchipelago
             if (DeathLinkStatus == DeathLinkStatus.None && DeathAmnestyCount >= Instance.SlotData.DeathAmnestyMax - 1)
             {
                 ChatHandler.HandleMessage("Death Sent", Color.PaleVioletRed);
-                var deathLink = new DeathLink(Session.Players.GetPlayerAlias(Session.ConnectionInfo.Slot), "Celeste");
+                DeathLink deathLink = new DeathLink(Session.Players.GetPlayerAlias(Session.ConnectionInfo.Slot), "Celeste");
                 DeathLinkService.SendDeathLink(deathLink);
 
                 DeathAmnestyCount = 0;
