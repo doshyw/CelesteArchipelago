@@ -206,7 +206,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 if (receivedItemsHelper.PeekItem().ItemName == "Victory (Celeste)")
                 {
                     receivedItemsHelper.DequeueItem();
-                    return;
+                    continue;
                 }
                 var itemID = receivedItemsHelper.PeekItem().ItemId;
                 ArchipelagoNetworkItem item = new ArchipelagoNetworkItem(itemID);
