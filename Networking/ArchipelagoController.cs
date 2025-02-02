@@ -144,7 +144,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 port:     CelesteArchipelagoModule.Settings.Port,
                 name:     CelesteArchipelagoModule.Settings.Name,
                 flags:    ItemsHandlingFlags.AllItems,
-                version:  new Version(0, 5, 0),
+                version:  new Version(0, 5, 1), // Needs hotfix aswell
                 tags:     null,
                 uuid:     null,
                 password: CelesteArchipelagoModule.Settings.Password,
@@ -161,11 +161,13 @@ namespace Celeste.Mod.CelesteArchipelago
                     }
                     Session.DataStorage[Scope.Slot, "CelestePlayState"].Initialize("1;0;0;dotutorial");
                     Session.DataStorage[Scope.Slot, "CelesteCheckpointState"].Initialize(long.MinValue);
+                    Session.DataStorage[Scope.Slot, "CelesteDeathAmnestyState"].Initialize(0);
 
                     CelesteArchipelagoModule.Settings.DeathLink = SlotData.DeathLink == 1;
                     DeathLinkService = Session.CreateDeathLinkService();
                     DeathLinkService.OnDeathLinkReceived += ReceiveDeathLinkCallback;
-                    
+
+                    DeathAmnestyCount = Session.DataStorage["CelesteDeathAmnestyState"];
 
                     if (CelesteArchipelagoModule.Settings.DeathLink)
                     {
@@ -252,7 +254,7 @@ namespace Celeste.Mod.CelesteArchipelago
             string completeMessage;
             if (string.IsNullOrEmpty(deathLink.Cause))
             {
-                completeMessage = $"DeathLink from {deathLink.Source}: {deathLink.Source} died";
+                completeMessage = $"DeathLink: {deathLink.Source} died";
             }
             else
             {
@@ -269,6 +271,42 @@ namespace Celeste.Mod.CelesteArchipelago
             }
         }
 
+        private string setDeathCause(string chapter, string player)
+        {
+            switch (chapter)
+            {
+                case "Celeste/0-Intro": // Prologue
+                    return $"Granny Laughs at {player}"; // "Died to a driveway"
+                case "Celeste/1-ForsakenCity":
+                    return $"{player} died in the Forsaken City";
+                case "Celeste/2-OldSite":
+                    return $"{player} kept dreaming";
+                case "Celeste/3-CelestialResort":
+                    return $"{player} couldn't handle the dust bunnies"; // or Oshiro reference
+                case "Celeste/4-GoldenRidge":
+                    return $"{player} was taken away by the wind"; // or snowball reference
+                case "Celeste/5-MirrorTemple":
+                    return $"{player} got lost in the temple"; // or seeker reference
+                case "Celeste/6-Reflection":
+                    return $"{player} tried to get rid of a part of themself"; // "You think a feather can beat me?" or "Kevin had something to say"
+                case "Celeste/7-Summit":
+                    return $"{player} fell on the climb to the top of celeste mountain";
+                case "Celeste/8-Epilogue":
+                    return $"{player}'s strawberry cake was a lie";
+                case "Celeste/9-Core":
+                    return $"{player} couldn't reach the core";
+                case "Celeste/LostLevels": // Farewell
+                    return $"{player} says Farewell";
+                default:
+                    Logger.Log(LogLevel.Debug, "CelesteArchipelago", $"Could not find cause {chapter}");
+                    return $"{player} died in Celeste";
+            }
+
+            // Could implement many messages per chapter
+            // Could get specific item player died to
+            // Feel free to change messages if you believe that your message is better
+        }
+
         public void SendDeathLinkCallback()
         {
             if (!CelesteArchipelagoModule.Settings.DeathLink)
@@ -279,7 +317,8 @@ namespace Celeste.Mod.CelesteArchipelago
             if (DeathLinkStatus == DeathLinkStatus.None && DeathAmnestyCount >= Instance.SlotData.DeathAmnestyMax - 1)
             {
                 ChatHandler.HandleMessage("Death Sent", Color.PaleVioletRed);
-                DeathLink deathLink = new DeathLink(Session.Players.GetPlayerAlias(Session.ConnectionInfo.Slot), "Celeste");
+                string sourcePlayer = Session.Players.GetPlayerAlias(Session.ConnectionInfo.Slot);
+                DeathLink deathLink = new DeathLink(sourcePlayer, setDeathCause(PlayState.AreaKey.GetSID(), sourcePlayer));
                 DeathLinkService.SendDeathLink(deathLink);
 
                 DeathAmnestyCount = 0;
@@ -288,6 +327,8 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 DeathAmnestyCount++;
             }
+
+            Session.DataStorage["CelesteDeathAmnestyState"] = DeathAmnestyCount;
         }
 
         public void HandleMessage(LogMessage message)
