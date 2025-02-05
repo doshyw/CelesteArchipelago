@@ -1,11 +1,6 @@
 ﻿using Celeste.Mod.UI;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Celeste.Mod.CelesteArchipelago
 {
@@ -13,16 +8,28 @@ namespace Celeste.Mod.CelesteArchipelago
     {
 		public StringInput(PropertyInfo setting, TextMenu menu) : base($"{setting.Name}: {setting.GetValue(CelesteArchipelagoModule.Settings)}")
 		{
-            var value = setting.GetValue(CelesteArchipelagoModule.Settings);
+            var value = (string)setting.GetValue(CelesteArchipelagoModule.Settings);
+            var maxLen = 64;
+            var minLen = 0;
 
-			this.Pressed(delegate
+			Pressed(() =>
             {
-                Audio.Play("event:/ui/main/savefile_rename_start");
-                menu.SceneAs<Overworld>().Goto<OuiModOptionString>().Init<OuiArchipelago>((string)value, delegate (string v)
-                {
-                   setting.SetValue(CelesteArchipelagoModule.Settings, v);
-                }, 64, 0);
+                Audio.Play(SFX.ui_main_savefile_rename_start);
+                menu.SceneAs<Overworld>().Goto<SavingStringEditor>().Init<OuiArchipelago>(
+                    value,
+                    v => setting.SetValue(CelesteArchipelagoModule.Settings, v),
+                    maxLen,
+                    minLen);
             });
 		}
+    }
+
+    public class SavingStringEditor : OuiModOptionString
+    {
+        public override IEnumerator Leave(Oui next)
+        {
+            yield return base.Leave(next);
+            yield return Everest.SaveSettings();
+        }
     }
 }
