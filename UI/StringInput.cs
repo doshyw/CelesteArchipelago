@@ -8,7 +8,7 @@ namespace Celeste.Mod.CelesteArchipelago
     {
 		public StringInput(PropertyInfo setting, TextMenu menu) : base($"{setting.Name}: {setting.GetValue(CelesteArchipelagoModule.Settings)}")
 		{
-            var value = setting.GetValue(CelesteArchipelagoModule.Settings);
+            var value = (string)setting.GetValue(CelesteArchipelagoModule.Settings);
             var maxLen = 64;
             var minLen = 0;
 
@@ -16,7 +16,7 @@ namespace Celeste.Mod.CelesteArchipelago
             {
                 Audio.Play(SFX.ui_main_savefile_rename_start);
                 menu.SceneAs<Overworld>().Goto<SavingStringEditor>().Init<OuiArchipelago>(
-                    (string)value,
+                    value,
                     v => setting.SetValue(CelesteArchipelagoModule.Settings, v),
                     maxLen,
                     minLen);
