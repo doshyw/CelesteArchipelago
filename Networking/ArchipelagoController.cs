@@ -168,13 +168,13 @@ namespace Celeste.Mod.CelesteArchipelago
             Connection?.Dispose();
         }
 
-        public void ReceiveItemCallback(ReceivedItemsHelper receivedItemsHelper)
+        public void ReceiveItemCallback(IReceivedItemsHelper receivedItemsHelper)
         {
             while(receivedItemsHelper.Any())
             {
                 // Receive latest uncollected item
-                Logger.Log("CelesteArchipelago", $"Received item {receivedItemsHelper.PeekItemName()} with ID {receivedItemsHelper.PeekItem().Item}");
-                var itemID = receivedItemsHelper.PeekItem().Item;
+                Logger.Log("CelesteArchipelago", $"Received item {receivedItemsHelper.PeekItem().ItemName} with ID {receivedItemsHelper.PeekItem().ItemId}");
+                var itemID = receivedItemsHelper.PeekItem().ItemId;
                 ArchipelagoNetworkItem item = new ArchipelagoNetworkItem(itemID);
 
                 // Collect received item via chosen progression system
