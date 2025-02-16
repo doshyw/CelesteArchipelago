@@ -26,7 +26,7 @@
 
     <!--Disable "Copy Local" for all references-->
     <ItemDefinitionGroup>
-        <PackageReference PrivateAssets="all" ExcludeAssets="runtime" />
+		<!--<PackageReference PrivateAssets="all" ExcludeAssets="runtime" />-->
         <Reference Private="false" />
     </ItemDefinitionGroup>
     <ItemGroup>
@@ -38,12 +38,12 @@
       <None Remove="src\**" />
     </ItemGroup>
     <ItemGroup>
-      <None Remove="Archipelago.MultiClient.Net.dll" />
+      <!--<None Remove="Archipelago.MultiClient.Net.dll" />-->
       <None Remove="CelesteArchipelago.dll" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Archipelago.MultiClient.Net" Version="5.0.6" />
+        <PackageReference Include="Archipelago.MultiClient.Net" Version="6.2.0" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.01.04.03" PrivateAssets="all" ExcludeAssets="runtime" />
     </ItemGroup>
 
@@ -81,6 +81,7 @@
     </Choose>
 
     <Target Name="CopyFiles" AfterTargets="Build">
+		<Copy SourceFiles="$(OutputPath)\Archipelago.MultiClient.Net.dll" DestinationFolder="bin" />
         <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="bin" />
         <Copy SourceFiles="$(OutputPath)\$(AssemblyName).pdb" DestinationFolder="bin" />
     </Target>

@@ -26,20 +26,21 @@ namespace Celeste.Mod.CelesteArchipelago
 
         private static void ctor(On.Celeste.HeartGemDoor.orig_ctor orig, HeartGemDoor self, EntityData data, Vector2 offset)
         {
-            if (ArchipelagoController.Instance.SlotData.DisableHeartGates == 1)
-            {
-                (self.Scene as Level).Session.SetFlag("opened_heartgem_door_" + self.Requires);
-            }
+            //if (ArchipelagoController.Instance.SlotData.DisableHeartGates == 1)
+            //{
+            //    (self.Scene as Level).Session.SetFlag("opened_heartgem_door_" + self.Requires);
+            //}
             orig(self, data, offset);
         }
 
         private delegate int orig_HeartGemDoor_get_HeartGems(HeartGemDoor self);
         private static int Get_HeartGems(orig_HeartGemDoor_get_HeartGems orig, HeartGemDoor self)
         {
-            if (SaveData.Instance.CheatMode)
+            if (SaveData.Instance.CheatMode || ArchipelagoController.Instance.SlotData.DisableHeartGates == 1)
             {
                 return self.Requires;
             }
+
             return ArchipelagoController.Instance.ProgressionSystem.GetTotalLogically(CollectableType.HEARTGEM);
         }
 

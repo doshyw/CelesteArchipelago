@@ -45,8 +45,8 @@ namespace Celeste.Mod.CelesteArchipelago
                 if (self.Follower.Leader != null)
                 {
                     Player obj = self.Follower.Leader.Entity as Player;
-                    // collectIndex = obj.StrawberryCollectIndex;
-                    // obj.StrawberryCollectIndex++;
+                    collectIndex = obj.StrawberryCollectIndex;
+                    obj.StrawberryCollectIndex++;
                     obj.StrawberryCollectResetTimer = 2.5f;
                     self.Follower.Leader.LoseFollower(self.Follower);
                 }
@@ -58,7 +58,7 @@ namespace Celeste.Mod.CelesteArchipelago
                 ArchipelagoController.Instance.ProgressionSystem.OnCollectedClient(SaveData.Instance.CurrentSession_Safe.Area, CollectableType.STRAWBERRY, self.ID); // NEW
                 Session session = (self.Scene as Level).Session;
                 session.DoNotLoad.Add(self.ID);
-                // session.Strawberries.Add(self.ID);
+                session.Strawberries.Add(self.ID);
                 session.UpdateLevelStartDashes();
                 self.Add(new Coroutine(strawberry.Invoke<IEnumerator>("CollectRoutine", collectIndex)));
             }

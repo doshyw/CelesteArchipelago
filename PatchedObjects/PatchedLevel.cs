@@ -6,14 +6,23 @@ namespace Celeste.Mod.CelesteArchipelago
     {
         public void Load()
         {
+            Everest.Events.Level.OnEnter += OnEnter;
             Everest.Events.Level.OnTransitionTo += OnTransitionTo;
             Everest.Events.Level.OnExit += OnExit;
         }
 
         public void Unload()
         {
+            Everest.Events.Level.OnEnter -= OnEnter;
             Everest.Events.Level.OnTransitionTo -= OnTransitionTo;
             Everest.Events.Level.OnExit -= OnExit;
+        }
+
+        private static void OnEnter(Session session, bool fromSaveData)
+        {
+            var state = new PlayState(true, session.Area, session.LevelData.Name);
+            Logger.Log("CelesteArchipelago", $"Entering level. Setting PlayState to {state}");
+            ArchipelagoController.Instance.PlayState = state;
         }
 
         private static void OnTransitionTo(Level level, LevelData next, Vector2 direction)

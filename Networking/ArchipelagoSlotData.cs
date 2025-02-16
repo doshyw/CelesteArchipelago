@@ -16,6 +16,8 @@ namespace Celeste.Mod.CelesteArchipelago
         public long VictoryCondition { get; set; } = 0;
         public long ProgressionSystem { get; set; } = 0;
         public long DisableHeartGates { get; set; } = 0;
+        public long DeathLink { get; set; } = 0;
+        public long DeathAmnestyMax { get; set; } = 20;
 
         private Dictionary<string, PropertyInfo> keyPropertyMap = new Dictionary<string, PropertyInfo>
         {
@@ -23,9 +25,12 @@ namespace Celeste.Mod.CelesteArchipelago
             { "cassettes_required", typeof(ArchipelagoSlotData).GetProperty("CassettesRequired") },
             { "hearts_required", typeof(ArchipelagoSlotData).GetProperty("HeartsRequired") },
             { "levels_required", typeof(ArchipelagoSlotData).GetProperty("LevelsRequired") },
-            { "goal_level", typeof(ArchipelagoSlotData).GetProperty("VictoryCondition") },
+            { "victory_condition", typeof(ArchipelagoSlotData).GetProperty("VictoryCondition") },
             { "progression_system", typeof(ArchipelagoSlotData).GetProperty("ProgressionSystem") },
+            { "goal_level", typeof(ArchipelagoSlotData).GetProperty("VictoryCondition") },
             { "disable_heart_gates", typeof(ArchipelagoSlotData).GetProperty("DisableHeartGates") },
+            { "death_link", typeof(ArchipelagoSlotData).GetProperty("DeathLink") },
+            { "death_link_amnesty", typeof(ArchipelagoSlotData).GetProperty("DeathAmnestyMax") },
         };
 
         public ArchipelagoSlotData(Dictionary<string, object> slotData)

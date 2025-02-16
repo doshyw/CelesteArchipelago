@@ -1,6 +1,6 @@
-- Name: CelesteArchipelagoDev
-  Version: 0.3.1
+- Name: CelesteArchipelago
+  Version: 0.3.2
   DLL: bin/CelesteArchipelago.dll
   Dependencies:
     - Name: Everest
-      Version: 1.4465.0
+      Version: 1.4896.0
