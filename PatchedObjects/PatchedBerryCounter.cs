@@ -13,7 +13,6 @@ namespace Celeste.Mod.CelesteArchipelago
         public void Load()
         {
 			On.Celeste.GameplayStats.Render += BerryCounter;
-
 		}
 
         public void Unload()
